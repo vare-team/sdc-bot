@@ -1,0 +1,18 @@
+{
+	"name": "sediscom",
+	"version": "3.1.0",
+	"license": "MIT",
+	"author": "SDC (https://server-discord.com/)",
+	"main": "shard.js",
+	"private": true,
+	"repository": {
+		"type" : "git",
+		"url" : "https://github.com/MegaVasiliy007/sediscom.git"
+	},
+	"dependencies": {
+		"discord.js": "latest",
+		"fs": "latest",
+		"mysql": "latest",
+		"mysql-utilities": "latest"
+	},
+}
