@@ -29,30 +29,29 @@ exports.run = async (client, msg) => {
 		msg.channel.send({embed});
 		flaggg = 1;
 	}
-	
-	if (!flaggg && now - data.upTime <= 4 * 3600000 + 30000) {
-		let warntime = new Date((now - data.upTime) - 4 * 3600000);
-
-		embed = new client.userLib.discord.RichEmbed()
-		.setAuthor('ЗАМЕЧЕНА ПОДОЗРИТЕЛЬНАЯ АКТИВНОСТЬ!')
-		.setColor('#ff0000')
-		.setTimestamp()
-		.addField("Апнул", `${msg.author.tag} (ID: ${msg.author.id})`)
-		.addField("Канал", `${msg.channel.name} (ID: ${msg.channel.id})`)
-		.addField("Сервер", `${msg.guild.name} (ID: ${msg.guild.id})`)
-		.setDescription(`АП произоёшл спустя **${warntime.getMinutes()}** минут, **${warntime.getSeconds()}** секунд.`);
-
-		client.userLib.autoup.send(embed);
-	}
 
 	if (!flaggg && !data.boost && !(await captcha(client.userLib.discord, msg.channel, msg.author))) {
 
 		let embederr = new client.userLib.discord.RichEmbed()
-			.setAuthor('Каптча не пройдена!')
+			.setTitle('Каптча не пройдена!')
 			.setColor('#ff0000')
 			.setTimestamp();
 
 		msg.channel.send(embederr);
+		flaggg = 1;
+	}
+
+	let dataTime = await client.userLib.promise(client.userLib.db, client.userLib.db.queryValue, 'SELECT upTime FROM server WHERE id = ?', [msg.guild.id]);
+	dataTime = dataTime.res;
+
+	if (!flaggg && now - dataTime <= 4 * 3600000) {
+		let send = new Date(4 * 3600000 - (now - dataTime));
+
+		embed = new client.userLib.discord.RichEmbed()
+			.setAuthor('0' + send.getUTCHours() + ':' + ('00' + send.getMinutes()).slice(-2) + ':' + ('00' + send.getSeconds()).slice(-2) + ' до следующего Up', `https://cdn.discordapp.com/attachments/510728319902416897/533596998570606612/clock.png`)
+			.setColor('#4A90E2').setTimestamp().setFooter(msg.author.tag);
+			
+		msg.channel.send({embed});
 		flaggg = 1;
 	}
 
@@ -61,12 +60,12 @@ exports.run = async (client, msg) => {
 		return;
 	}
 
-	client.userLib.db.query(`UPDATE server SET upTime = ?, upCount = upCount + ${0x8 & data.status ? '1 + ' : ''}boost + 1 , online = ?, members = ?, owner = ? WHERE id = ?`, [now, msg.guild.members.filter(m => m.presence.status != 'offline' && !m.user.bot).array().length, msg.guild.memberCount, msg.guild.owner.user.tag, msg.guild.id], () => {});
+	client.userLib.db.query(`UPDATE server SET upTime = ?, upCount = upCount + ${0x8 & data.status ? '1 + ' : ''}boost + 1 , online = ?, members = ?, ownerID = ? WHERE id = ?`, [now, msg.guild.members.filter(m => m.presence.status != 'offline' && !m.user.bot).array().length, msg.guild.memberCount, msg.guild.ownerID, msg.guild.id], () => {});
 
-	client.userLib.sendlog(`{Guild UP} User "${msg.author.tag}"(ID: ${msg.author.id}), Guild "${msg.guild}" (ID: ${msg.guild.id}), Channel "${msg.channel.name}"(ID: ${msg.channel.id})`);
+	client.userLib.sendlog(`{Guild UP} Ups "${data.upCount + data.boost + 1 + (0x8 & data.status ? 1 : 0)}", User "${msg.author.tag}"(ID: ${msg.author.id}), Guild "${msg.guild}" (ID: ${msg.guild.id}), Channel "${msg.channel.name}"(ID: ${msg.channel.id})`);
 
 	embed = new client.userLib.discord.RichEmbed()
-		.setAuthor('Сервер Up')
+		.setTitle('Сервер Up')
 		.setColor('#79D60F')
 		.setTimestamp()
 		.setFooter(msg.author.tag)

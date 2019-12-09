@@ -1,8 +1,9 @@
 const Discord = require('discord.js')
 		,	client = new Discord.Client({messageCacheMaxSize: 1, messageCacheLifetime: 1, messageSweepInterval: 1, fetchAllMembers: false})
-		,	fs = require("fs");
+		,	fs = require("fs")
+		;
 
-let con = require('mysql').createConnection({user: process.env.dblogin, password: process.env.dbpass, database: "discord", charset: "utf8mb4"});
+let con = require('mysql2').createConnection({user: process.env.dblogin, password: process.env.dbpass, database: "discord", charset: "utf8mb4"});
 con.on('error', (err) => {console.warn(err)});
 con.connect(() => {client.userLib.sendlog(`{DB Connected} (ID:${con.threadId})`);});
 let util = require('mysql-utilities');
@@ -24,7 +25,7 @@ client.userLib.cooldown = new Set();
 
 client.userLib.logc = new Discord.WebhookClient("578236376361730068", "Avm2Uy4KTi4L6I3GrCiwXo0SxhSE-4cCp0c6PUUDfjmlLQlANpws9ioFVXBn9_TQOrak");
 client.userLib.dm = new Discord.WebhookClient("586110798032797709", "kt6uWTbTELlMkjJ8tbwDSq_m54zfi6tTSAAlNl6njQRKLpvjnlV39j2tGn42lzT_h6Yr");
-client.userLib.autoup = new Discord.WebhookClient("586246851225714708", "I7UJJqiLX0-Aq9m8fhc51rc03wHofJ75DSt3lbarbcpHZIGJmm1SFoS2v7Y9CVtiNgIK");
+client.userLib.command = new Discord.WebhookClient("631960716894535682", "zROVA3TmqMY2YPmBZso6ko6rkU9foqnLXtm8XZWx_Kp47t7qVYtKI-53CDRJVAuOBwzA");
 
 client.userLib.sendlog = (log) => {
 	const now = new Date();
@@ -48,12 +49,12 @@ client.userLib.presenseFunc = () => {
 	client.userLib.presenseCount++;
 };
 
-con.queryKeyValue('SELECT id, tier FROM admins WHERE 1', (err, result) => client.userLib.admins = result);
+con.queryKeyValue('SELECT id, tier FROM admins WHERE 1', (err, result) => client.userLib.admins = result );
+con.query('SELECT idach, emoji FROM achivments', (err, result) => client.userLib.emojis = result );
 
-fs.readdir("/root/bots/sediscom/events/", (err, files) => {
+fs.readdir("./events/", (err, files) => {
 	if (err) return console.error(err);
-	files.forEach(file => {
-		if (!file.endsWith(".js")) return;
+	files.filter(l => l.endsWith('.js')).forEach(file => {
 		try {
 			const event = require(`./events/${file}`);
 			let eventName = file.split(".")[0];
@@ -65,10 +66,9 @@ fs.readdir("/root/bots/sediscom/events/", (err, files) => {
 
 client.commands = new Discord.Collection();
 
-fs.readdir("/root/bots/sediscom/commands/", (err, files) => {
+fs.readdir("./commands/", (err, files) => {
 	if (err) return console.error(err);
-	files.forEach(file => {
-		if (!file.endsWith(".js")) return;
+	files.filter(l => l.endsWith('.js')).forEach(file => {
 		try {
 			let props = require(`./commands/${file}`);
 			let commandName = file.split(".")[0];

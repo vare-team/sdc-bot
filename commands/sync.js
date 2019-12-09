@@ -13,15 +13,15 @@ exports.run = async (client, msg) => {
 
 	res.splice(res.indexOf('577798137230655508'), 1);
 
-	await client.userLib.db.queryCol(`SELECT id FROM server WHERE id IN (?) AND bot = 0`, [res], (err, result) => {
+	client.userLib.db.queryCol(`SELECT id FROM server WHERE id IN (?) AND bot = 0`, [res], (err, result) => {
 		client.userLib.db.query(`UPDATE server SET bot = 1 WHERE id IN (?)`, [result], () => {});
 	}); 
 
-	await client.userLib.db.queryCol('SELECT id FROM server WHERE bot = 1', (err, result) => {
+	client.userLib.db.queryCol('SELECT id FROM server WHERE bot = 1', (err, result) => {
 		client.userLib.db.query(`UPDATE server SET bot = 0 WHERE id IN (?)`, [result.filter(item => res.indexOf(item) == -1)], () => {});
 	});
 
-	await client.userLib.db.queryCol(`SELECT id FROM server WHERE id IN (?)`, [res], async (err, result) => {
+	client.userLib.db.queryCol(`SELECT id FROM server WHERE id IN (?)`, [res], async (err, result) => {
 		result = res.filter(item => result.indexOf(item) == -1);
 		let temp = '';
 		console.log(result);

@@ -3,7 +3,7 @@ module.exports = async (client, guild) => {
   let result = (await client.userLib.promise(client.userLib.db, client.userLib.db.count, 'server', {id: guild.id})).res;
   if (!result) {guild.leave(); return;}
 
-  client.userLib.db.query('UPDATE server SET bot = 1, members = ?, online = ?, owner = ?, ownerID = ? WHERE id = ?', [guild.memberCount, guild.members.filter(m => m.presence.status == 'online' && !m.user.bot).size, guild.owner ? guild.owner.user.tag : 'NULL#0000', guild.ownerID, guild.id], () => {});
+  client.userLib.db.query('UPDATE server SET bot = 1, members = ?, online = ?, ownerID = ? WHERE id = ?', [guild.memberCount, guild.members.filter(m => m.presence.status == 'online' && !m.user.bot).size, guild.ownerID, guild.id], () => {});
   
   let embed = new client.userLib.discord.RichEmbed()
   .setAuthor('Новый сервер!')

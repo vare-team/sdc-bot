@@ -1,11 +1,15 @@
-const msgid = ['577804676368433152', '577803342810710031'];
+const msgid = ['577804676368433152', '605715530506174464'];
 
 module.exports = (client, msg) => {
-	if (msgid.indexOf(msg.channel.id) != -1) {msg.react('👍'); return setTimeout(() => msg.react('👎'), 300)}
+	if (msgid.indexOf(msg.channel.id) != -1) {msg.react('👍').then(() => msg.react('👎')); return;}
 
 	if (msg.channel.type == 'dm' && msg.author.id != client.user.id && Object.keys(client.userLib.admins).indexOf(msg.author.id) == -1) {client.userLib.dm.send(msg.content, {username: `${msg.author.tag} (${msg.author.id})`,avatarURL: msg.author.avatarURL});}
 
 	if (msg.author.bot || !msg.content.toLowerCase().startsWith('s.')) return;
+
+	if (msg.channel.type == 'dm' && Object.keys(client.userLib.admins).indexOf(msg.author.id) == -1) return msg.channel.send("Команды недоступны в личных сообщениях.");
+
+	if (msg.guild.id == '577798137230655508' && Object.keys(client.userLib.admins).indexOf(msg.author.id) == -1) return;
 
 	const args = msg.content.slice(2).trim().split(/ +/g);
 
@@ -14,7 +18,7 @@ module.exports = (client, msg) => {
 	const cmd = client.commands.get(command);
 	if (!cmd) return;
 
-	if (msg.channel.type == 'dm' && Object.keys(client.userLib.admins).indexOf(msg.author.id) == -1) return msg.channel.send("Команды недоступны в личных сообщениях.");
+	// if (cmd.help.flag) return;
 
 	if (Object.keys(client.userLib.admins).indexOf(msg.author.id) == -1 && cmd.help.flag) return;
 
@@ -25,6 +29,9 @@ module.exports = (client, msg) => {
 
 	if (msg.channel.type != 'dm' && !msg.channel.permissionsFor(client.user).has("EMBED_LINKS"))
 		return msg.reply(`У меня нет разрешения отправлять ссылки в данном канале. Без него я не смогу работать тут.`);
+
+	if (msg.channel.type != 'dm' && !msg.channel.permissionsFor(client.user).has("ATTACH_FILES"))
+		return msg.reply(`У меня нет разрешения отправлять картинки в данном канале. Без него я не смогу работать тут.`);
 
 	// if (msg.channel.type != 'dm' && !msg.channel.permissionsFor(client.user).has("MANAGE_MESSAGES"))
 	// 	msg.reply(`У меня нет разрешения удалять сообщения. Если вы хотите сохранить чат в чистоте выдайте право.`);
