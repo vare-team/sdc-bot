@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/sediscom.iml" filepath="$PROJECT_DIR$/.idea/sediscom.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/sdc.iml" filepath="$PROJECT_DIR$/.idea/sdc.iml" />
     </modules>
   </component>
 </project>
