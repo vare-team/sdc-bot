@@ -3,7 +3,7 @@ const Discord = require('discord.js')
 		,	fs = require("fs")
 		;
 
-let con = require('mysql2').createConnection({user: process.env.dblogin, password: process.env.dbpass, database: "discord", charset: "utf8mb4"});
+let con = require('mysql2').createConnection({user: process.env.dblogin, password: process.env.dbpass, host: process.env.dbhost, database: "discord", charset: "utf8mb4"});
 con.on('error', (err) => {console.warn(err)});
 con.connect(() => {client.userLib.sendlog(`{DB Connected} (ID:${con.threadId})`);});
 let util = require('mysql-utilities');
