@@ -7,12 +7,17 @@
 	"private": true,
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/MegaVasiliy007/sediscom.git"
+		"url": "https://github.com/MegaVasiliy007/sdc.git"
 	},
 	"dependencies": {
 		"discord.js": "latest",
 		"fs": "latest",
-		"mysql": "latest",
-		"mysql-utilities": "latest"
+		"mysql2": "latest",
+		"mysql-utilities": "latest",
+		"moment": "latest",
+		"jimp": "latest"
+	},
+	"scripts": {
+		"debug": "node ."
 	}
 }

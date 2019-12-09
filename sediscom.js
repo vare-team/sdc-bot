@@ -19,7 +19,7 @@ client.userLib.moment.locale('ru');
 
 client.userLib.discord = Discord;
 client.userLib.db = con;
-client.userLib.promise = require('/root/site/modules/promise');
+client.userLib.promise = require('./promise');
 client.userLib.presenseCount = 1;
 client.userLib.cooldown = new Set();
 
@@ -35,7 +35,7 @@ client.userLib.sendlog = (log) => {
 client.userLib.presenseFunc = () => {
 	switch (client.userLib.presenseCount) {
 		case 1:
-			client.shard.fetchClientValues('guilds.size').then(results => {client.user.setPresence({ game: { name: `серверов: ${results.reduce((prev, val) => prev + val, 0) - 1} | s.help`, type: 'WATCHING' }});})
+			client.shard.fetchClientValues('guilds.size').then(results => {client.user.setPresence({ game: { name: `серверов: ${results.reduce((prev, val) => prev + val, 0) - 1} | s.help`, type: 'WATCHING' }});});
 			break;
 		case 2:
 			client.user.setPresence({ game: { name: `s.help | s.info | s.up`, type: 'LISTENING' }});

@@ -5,7 +5,7 @@ exports.help = {
 
 let boosts = ['Light', 'Pro', 'Max'];
 
-const captcha = require('/root/bots/sediscom/captcha');
+const captcha = require('../captcha');
 
 exports.run = async (client, msg) => {
 
@@ -89,4 +89,4 @@ exports.run = async (client, msg) => {
 	msg.channel.send({embed});
 
 	client.userLib.db.query('INSERT INTO sdcstat (date, ups) VALUES (?, 1) ON DUPLICATE KEY UPDATE ups = ups + 1', [new Date]);
-}
+};
