@@ -12,7 +12,7 @@ util.introspection(con);
 
 client.userLib = {};
 
-client.userLib.shardName = require('./shards_name.json').name;
+client.userLib.shardName = require('./shards_name');
 
 client.userLib.moment = require('moment');
 client.userLib.moment.locale('ru');
@@ -49,8 +49,8 @@ client.userLib.presenseFunc = () => {
 	client.userLib.presenseCount++;
 };
 
-con.queryKeyValue('SELECT id, tier FROM admins WHERE 1', (err, result) => client.userLib.admins = result );
-con.query('SELECT idach, emoji FROM achivments', (err, result) => client.userLib.emojis = result );
+con.queryKeyValue('SELECT id, tier FROM admins WHERE 1', (err, result) => {client.userLib.admins = result; client.userLib.sendlog("{ADMINS} Loaded!")} );
+con.query('SELECT idach, emoji FROM achivments', (err, result) => {client.userLib.emojis = result; client.userLib.sendlog("{EMOJIS} Loaded!")} );
 
 fs.readdir("./events/", (err, files) => {
 	if (err) return console.error(err);
