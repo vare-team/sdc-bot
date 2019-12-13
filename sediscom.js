@@ -19,7 +19,7 @@ client.userLib.moment.locale('ru');
 
 client.userLib.discord = Discord;
 client.userLib.db = con;
-client.userLib.promise = require('./promise');
+client.userLib.promise = require('../SDCBotsModules/promise');
 client.userLib.presenseCount = 1;
 client.userLib.cooldown = new Set();
 

@@ -1,6 +1,6 @@
 module.exports = async (client, guild) => {
 
-	let black = (await client.userLib.promise(client.userLib.db, client.userLib.db.query, 'SELECT COUNT(*) FROM blacklist WHERE id = ? AND warns > 2', [guild.id])).res;
+	let black = (await client.userLib.promise(client.userLib.db, client.userLib.db.queryValue, 'SELECT COUNT(*) FROM blacklist WHERE id = ? AND warns > 2', [guild.id])).res;
 	if (black) {guild.leave(); return;}
 
 	let result = (await client.userLib.promise(client.userLib.db, client.userLib.db.count, 'server', {id: guild.id})).res;
