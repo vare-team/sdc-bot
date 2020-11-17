@@ -1,0 +1,22 @@
+{
+  "name": "sdc",
+  "version": "3.0.0",
+  "private": true,
+	"scripts": {
+		"start": "node .",
+		"debug": "nodemon ."
+	},
+	"dependencies": {
+    "bufferutil": "^4.0.2",
+    "discord.js": "^12.4.1",
+    "utf-8-validate": "^5.0.3",
+    "canvas": "^2.6.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.10.0",
+    "eslint-config-prettier": "^6.12.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "nodemon": "^2.0.6",
+    "prettier": "^2.1.2"
+  }
+}
