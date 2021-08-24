@@ -1,25 +1,9 @@
-const { Client } = require('discord.js');
+const { Client, Intents } = require('discord.js');
 
-const bot = new Client({
-	messageCacheMaxSize: 5,
-	messageCacheLifetime: 10,
-	messageEditHistoryMaxSize: 0,
-	messageSweepInterval: 10
-});
+const bot = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
 bot.on('ready', require('./events/ready')(bot));
-bot.on('message', require('./events/message')());
+bot.on('messageCreate', require('./events/message')());
+bot.on('interactionCreate', require('./events/interactionCreate')());
 
-bot.on('guildCreate', () => {
-	//
-});
-
-bot.on('guildUpdate', () => {
-	//
-});
-
-bot.on('guildDelete', () => {
-	//
-});
-
-bot.login();
+bot.login().then(() => console.log('Bot Authorized'));
