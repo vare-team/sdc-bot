@@ -58,25 +58,27 @@ exports.run = async (interaction) => {
 		const file = new MessageAttachment(canvas.toBuffer(), 'code.jpeg');
 		let embed = new MessageEmbed().setAuthor(interaction.member.guild.name, interaction.member.guild.iconURL(), `https://server-discord.com/${interaction.member.guild.id}`).setImage('attachment://code.jpeg').setDescription('Введите число, написанное на изображении, используя команду \`\`/up XXXX\`\`').setColor('#7289DA').setFooter("Данный код будет действителен в течении 1 минуты!");
 		interaction.editReply({ embeds: [embed], files: [file] });
-	} else {
+	} else { // Проверяем код
 		if (typeof codes[`${interaction.guild_id}_${interaction.user.id}`] === "undefined") { // up прописан с кодом, но в памяти код не сгенерирован
-			let embed = new MessageEmbed().setAuthor(interaction.member.guild.name, interaction.member.guild.iconURL(), `https://server-discord.com/${interaction.member.guild_id}`).setTitle('Введите \`\`/up\`\` без кода, что бы его сгенерировать!').setColor('#FAA61A').setFooter(interaction.user.tag, interaction.user.displayAvatarURL());
+			let embed = new MessageEmbed().setAuthor(interaction.member.guild.name, interaction.member.guild.iconURL(), `https://server-discord.com/${interaction.member.guild_id}`).setDescription('Введите \`\`/up\`\` без кода, что бы его сгенерировать!').setColor('#FAA61A').setFooter(interaction.user.tag, interaction.user.displayAvatarURL());
 			return interaction.reply( {embeds: [embed] } );
 		}
 
 		if (codes[`${interaction.guild_id}_${interaction.user.id}`].code === interaction.options.getInteger('код')) { // Код из памяти совпал с введённым
 			if (new Date - codes[`${interaction.guild_id}_${interaction.user.id}`].time > 60000) { // Срок действия кода истёк
 				codes[`${interaction.guild_id}_${interaction.user.id}`] = undefined; // Забываем код
-				let embed = new MessageEmbed().setAuthor(interaction.member.guild.name, interaction.member.guild.iconURL(), `https://server-discord.com/${interaction.member.guild_id}`).setTitle('Срок действия кода истёк!\nПолучите новый, прописав команду \`\`/up\`\`!').setColor('#F04747').setFooter(interaction.user.tag, interaction.user.displayAvatarURL());
+				let embed = new MessageEmbed().setAuthor(interaction.member.guild.name, interaction.member.guild.iconURL(), `https://server-discord.com/${interaction.member.guild_id}`).setDescription('Срок действия кода истёк!\nПолучите новый, прописав команду \`\`/up\`\`!').setColor('#F04747').setFooter(interaction.user.tag, interaction.user.displayAvatarURL());
 				return interaction.reply( {embeds: [embed] } );
 			}
 
 			codes[`${interaction.guild_id}_${interaction.user.id}`] = undefined; // Так же забываем код, но уже если он валидный
 
-			let embed = new MessageEmbed().setAuthor(interaction.member.guild.name, interaction.member.guild.iconURL(), `https://server-discord.com/${interaction.member.guild_id}`).setTitle('Успешный Up!').setColor('#43B581').setFooter(interaction.user.tag, interaction.user.displayAvatarURL());
+			const upTime = new Date;
+
+			let embed = new MessageEmbed().setAuthor(interaction.member.guild.name, interaction.member.guild.iconURL(), `https://server-discord.com/${interaction.member.guild_id}`).setDescription(`**Успешный Up!**\nВремя фиксации апа: <t:${Math.floor(+ upTime / 1000)}:T>`).setColor('#43B581').setFooter(interaction.user.tag, interaction.user.displayAvatarURL());
 			return interaction.reply( {embeds: [embed] } );
 		} else { // Код не верный
-			let embed = new MessageEmbed().setAuthor(interaction.member.guild.name, interaction.member.guild.iconURL(), `https://server-discord.com/${interaction.member.guild_id}`).setTitle('Код не действителен!').setColor('#F04747').setFooter(interaction.user.tag, interaction.user.displayAvatarURL());
+			let embed = new MessageEmbed().setAuthor(interaction.member.guild.name, interaction.member.guild.iconURL(), `https://server-discord.com/${interaction.member.guild_id}`).setDescription('Код не действителен!').setColor('#F04747').setFooter(interaction.user.tag, interaction.user.displayAvatarURL());
 			return interaction.reply( {embeds: [embed] } );
 		}
 	}
