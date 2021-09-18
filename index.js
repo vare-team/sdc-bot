@@ -1,11 +1,10 @@
-const { ShardingManager } = require('discord.js');
-const dateUtil = require('./utils/date');
+import { ShardingManager } from 'discord.js';
+import log from './utils/log';
+
 const shardManager = new ShardingManager('./sdc.js', { mode: 'worker', token: process.env.TOKEN });
 
-shardManager.on('shardCreate', (shard) => {
-	console.log(`${dateUtil(new Date())} | Shard[${shard.id}] shard spawned!`);
-});
+shardManager.on('shardCreate', shard => log(`Shard spawned!`, shard.id));
 
 (async () => {
-	let shards = await shardManager.spawn();
-})()
+	await shardManager.spawn();
+})();

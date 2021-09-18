@@ -2,21 +2,30 @@
   "name": "sdc",
   "version": "3.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "start": "node .",
-    "debug": "nodemon ."
+    "start": "node --experimental-specifier-resolution=node .",
+    "debug": "nodemon --experimental-specifier-resolution=node ."
+  },
+  "engines": {
+    "node": ">=16"
   },
   "dependencies": {
-    "bufferutil": "^4.0.2",
     "canvas": "^2.8.0",
     "discord.js": "^13.1.0",
-    "utf-8-validate": "^5.0.3"
+    "mysql2": "^2.3.0"
   },
   "devDependencies": {
-    "eslint": "^7.10.0",
-    "eslint-config-prettier": "^6.12.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "nodemon": "^2.0.6",
-    "prettier": "^2.1.2"
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.1",
+    "nodemon": "^2.0.12",
+    "prettier": "^2.3.2"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.3",
+    "erlpack": "github:discord/erlpack",
+    "utf-8-validate": "^5.0.5",
+    "zlib-sync": "^0.1.7"
   }
 }

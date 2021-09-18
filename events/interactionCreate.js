@@ -1,21 +1,18 @@
-const messages = require('../utils/replies');  // Заглушка для тестов
-const up = require('../utils/commandUp');
-const link = require('../utils/commandLinks');
+import messages from '../models/replies';
+import commands from '../commands';
 
-module.exports = () => (interaction) => {
+export default async function (interaction) {
+	if (!interaction.inGuild() || !interaction.isCommand()) return;
 
-	if (!interaction.inGuild() || !interaction.isCommand()) return; // В гилдии и это команда
+	try {
+		if (!commands.hasOwnProperty(interaction.commandName)) {
+			interaction.reply({ embeds: messages[interaction.commandName].embeds }); // Заглушка для тестов
+			return;
+		}
 
-	console.log(interaction.commandName)
-
-	switch (interaction.commandName) {
-		case 'up':
-			return up.run(interaction);
-			break;
-		case 'link':
-			return link.run(interaction);
+		await commands[interaction.commandName](interaction);
+	} catch (e) {
+		console.log(e);
+		interaction.reply('error');
 	}
-
-
-	interaction.reply({ embeds: messages[interaction.commandName].embeds }).then(r => console.log(r)) // Заглушка для тестов
 }

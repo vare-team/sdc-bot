@@ -1,5 +1,18 @@
-module.exports = () => (message) => {
-	if (!message.content.startsWith('s.') && /[0-9]{4}/.test(message.content)) return;
+export default function (message) {
+	if (!message.content.startsWith('s.')) return;
 
-	if (message.content.startsWith('s.up')) return message.reply('Ошибка! Бот переходит на новый тип взаимодействия - слеш команды!\nДля того, что бы апнутьть сервер пропишите \`\`/up\`\`!');
+	if (message.content.includes('s.up'))
+		message.reply(
+			'Ошибка! Бот переходит на новый тип взаимодействия - слеш команды!\nДля того, что бы апнуть сервер пропишите ``/up``!'
+		);
+
+	if (message.content.includes('s.info'))
+		message.reply(
+			'Ошибка! Бот переходит на новый тип взаимодействия - слеш команды!\nДля того, что бы узнать информацию о сервере пропишите ``/info``!'
+		);
+
+	if (message.content.includes('s.s'))
+		message.reply(
+			'Ошибка! Бот переходит на новый тип взаимодействия - слеш команды!\nДля того, что бы узнать ссылки пропишите ``/links``!'
+		);
 }
