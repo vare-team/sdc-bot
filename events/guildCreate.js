@@ -1,7 +1,7 @@
 import db from '../services/db';
 
 export default async function (guild) {
-	const [[inDB]] = await db.query('SELECT id FROM server WHERE id = ?', [guild.id]);
+	const inDB = await db.one('SELECT id FROM server WHERE id = ?', [guild.id]);
 	if (!inDB) {
 		await guild.leave();
 		return;

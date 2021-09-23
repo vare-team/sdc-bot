@@ -13,6 +13,7 @@ export default async function (interaction) {
 		await commands[interaction.commandName](interaction);
 	} catch (e) {
 		console.log(e);
-		interaction.reply('error');
+		// Если хочешь пиши суда какую-то фигню чтоб ловить ошибки при ожидании
+		// interaction.reply('error').catch(() => interaction.editReply('error edit'));
 	}
 }

@@ -4,7 +4,7 @@ import db from '../services/db';
 
 export default async function (interaction) {
 	const social = interaction.options.getString('сайт');
-	const [[socials]] = await db.query('SELECT * FROM userUrls WHERE id = ?', [interaction.guild.id]);
+	const socials = await db.one('SELECT * FROM userUrls WHERE id = ?', [interaction.guild.id]);
 	console.log(socials);
 
 	if (!socials?.[social]) {

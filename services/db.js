@@ -22,4 +22,16 @@ db.connect(err => {
 	log(`{DB Connected} (ID:${db.threadId})`);
 });
 
-export default db.promise();
+export default {
+	query: db.promise().query.bind(db.promise()),
+
+	async many(...args) {
+		const query = await db.promise().query(...args);
+		return query[0];
+	},
+
+	async one(...args) {
+		const query = await db.promise().query(...args);
+		return query[0][0];
+	},
+};
