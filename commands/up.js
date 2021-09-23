@@ -26,8 +26,6 @@ export default async function (interaction) {
 		return;
 	}
 
-	console.log(codes);
-
 	if (!code) {
 		if (!codes[interaction.guildId]) codes[interaction.guildId] = {};
 		codes[interaction.guildId][interaction.user.id] = { code: randomInt(1000, 9999), time: Date.now() };
