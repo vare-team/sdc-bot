@@ -3,6 +3,7 @@ import randomInt from '../utils/random';
 import captcha from '../services/captcha';
 import db from '../services/db';
 import log from '../utils/log';
+import colors from '../models/colors';
 
 const codes = {};
 
@@ -21,7 +22,7 @@ export default async function (interaction) {
 
 	if (Date.now() - guild.upTime <= 4 * 36e5) {
 		const sendDate = Math.floor((guild.upTime + 4 * 36e5) / 1000);
-		embed.setDescription(`Up <t:${sendDate}:R>: <t:${sendDate}:T>`).setColor('#F04747');
+		embed.setDescription(`Up <t:${sendDate}:R>: <t:${sendDate}:T>`).setColor(colors.red);
 		await interaction.reply({ embeds: [embed] });
 		return;
 	}
@@ -34,7 +35,7 @@ export default async function (interaction) {
 		embed
 			.setImage('attachment://code.jpeg')
 			.setDescription('Введите число, написанное на изображении, используя команду ``/up XXXX``')
-			.setColor('#7289DA')
+			.setColor(colors.blue)
 			.setFooter('Данный код будет действителен в течении 1 минуты!');
 
 		await interaction.reply({ ephemeral: true, embeds: [embed], files: [file] });
@@ -44,19 +45,19 @@ export default async function (interaction) {
 	embed.setFooter(interaction.user.tag, interaction.user.displayAvatarURL());
 
 	if (!codes[interaction.guildId]?.[interaction.user.id]?.code) {
-		embed.setDescription('Введите ``/up`` без кода, что бы его сгенерировать!').setColor('#FAA61A');
+		embed.setDescription('Введите ``/up`` без кода, что бы его сгенерировать!').setColor(colors.yellow);
 		await interaction.reply({ ephemeral: true, embeds: [embed] });
 		return;
 	}
 
 	if (codes[interaction.guildId][interaction.user.id].code !== code) {
-		embed.setDescription('Код не верен!').setColor('#F04747');
+		embed.setDescription('Код не верен!').setColor(colors.red);
 		await interaction.reply({ ephemeral: true, embeds: [embed] });
 		return;
 	}
 
 	if (Date.now() - codes[interaction.guildId][interaction.user.id].time > 60 * 1e3) {
-		embed.setDescription('Срок действия кода истёк!\nПолучите новый, прописав команду ``/up``!').setColor('#F04747');
+		embed.setDescription('Срок действия кода истёк!\nПолучите новый, прописав команду ``/up``!').setColor(colors.red);
 		await interaction.reply({ ephemeral: true, embeds: [embed] });
 		return;
 	}
@@ -64,7 +65,7 @@ export default async function (interaction) {
 	const { upTime: upTimeDB } = await db.one('SELECT upTime FROM server WHERE id = ?', [interaction.guildId]);
 	if (Date.now() - upTimeDB <= 4 * 36e5) {
 		const sendDate = Math.floor((upTimeDB + 4 * 36e5) / 1000);
-		embed.setDescription(`Up <t:${sendDate}:R>: <t:${sendDate}:T>`).setColor('#F04747');
+		embed.setDescription(`Up <t:${sendDate}:R>: <t:${sendDate}:T>`).setColor(colors.red);
 		await interaction.reply({ embeds: [embed] });
 		return;
 	}
@@ -84,7 +85,9 @@ export default async function (interaction) {
 		`{Guild UP} Ups "${upCount}", User "${interaction.user.tag}" (${interaction.user.id}), Guild "${interaction.guild.name}" (${interaction.guildId}), Channel "${interaction.channel.name}" (${interaction.channelId})`
 	);
 
-	embed.setDescription(`**Успешный Up!**\nВремя фиксации апа: <t:${Math.floor(+upTime / 1000)}:T>`).setColor('#43B581');
+	embed
+		.setDescription(`**Успешный Up!**\nВремя фиксации апа: <t:${Math.floor(+upTime / 1000)}:T>`)
+		.setColor(colors.green);
 	await interaction.reply({ embeds: [embed] });
 
 	delete codes[interaction.guildId][interaction.user.id];

@@ -1,6 +1,7 @@
 import { MessageEmbed } from 'discord.js';
 import links from '../models/links';
 import db from '../services/db';
+import colors from '../models/colors';
 
 export default async function (interaction) {
 	const social = interaction.options.getString('сайт');
@@ -14,7 +15,7 @@ export default async function (interaction) {
 
 	const link = links[social];
 	const embed = new MessageEmbed()
-		.setColor('#7289DA')
+		.setColor(colors.blue)
 		.setFooter('Ссылка, указанная на сайте мониторинга.')
 		.setAuthor(link.name, link.icon, link.url + socials?.[social] ?? '');
 
