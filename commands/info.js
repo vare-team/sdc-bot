@@ -27,7 +27,8 @@ export default async function (interaction) {
 				? `«**${guild.boost.type}**», до <t:${Math.floor(guild.boost.time / 1000)}:D>`
 				: '[Отсутсвует](https://server-discord.com/boost)'
 		)
-		.addField('Значки: ', `${emojis.spamhunt} — Охотник на спамеров\n${emojis.youtube} — Ютубер`);
+		.addField('Значки: ', `${emojis.spamhunt} — Охотник на спамеров\n${emojis.youtube} — Ютубер`)
+		.setFooter('Новый сезон через: 3 дня');
 
 	interaction.reply({ embeds: [embed] });
 }
