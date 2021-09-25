@@ -57,7 +57,7 @@ export default async function (interaction) {
 			'Буст:',
 			guild.boost
 				? `«**Boost ${boosts[guild.boost]}**», до <t:${Math.floor(guild.boostTime / 1000)}:D>`
-				: '[Отсутсвует](https://server-discord.com/boost)'
+				: '[Отсутствует](https://server-discord.com/boost)'
 		)
 		.addField('Значки: ', pins.length ? pins.map(({ name, icon }) => icon + ' - ' + name).join('\n') : 'Не выданы')
 		.setFooter('Новый сезон через ' + beforeDate(endDate));
