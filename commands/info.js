@@ -59,7 +59,7 @@ export default async function (interaction) {
 		)
 		.addField(
 			'Значки: ',
-			emojis
+			emojis.pins
 				.filter(({ id }) => guild.status & id)
 				.map(({ name, icon }) => icon + ' - ' + name)
 				.join('\n')
