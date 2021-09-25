@@ -6,6 +6,6 @@ export default async function (interaction) {
 	try {
 		await commands[interaction.commandName](interaction);
 	} catch (e) {
-		console.log(e);
+		console.warn(e);
 	}
 }

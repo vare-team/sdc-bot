@@ -1,8 +1,38 @@
 import { MessageEmbed } from 'discord.js';
 import emojis from '../models/emojis';
+import db from '../services/db';
+import colors from '../models/colors';
+import boosts from '../models/boosts';
+import beforeDate from '../utils/beforeDate';
 
 export default async function (interaction) {
-	let guild = { place: 333, rating: 333, boost: { type: 'Boost MAX', time: Date.now() }, up: 333, comments: 333 };
+	await db.query('SET @row_number = 0');
+
+	/**
+	 * @type {{upCount: number, boost: number, boostTime: Date, status: number, place: number, rating: number, comments: number}}
+	 */
+	const guild = await db.one(
+		`SELECT upCount, boost, boostTime, status, place, rating, comments FROM server
+	  LEFT JOIN boost using(id)
+	  LEFT JOIN (SELECT id, (@row_number:=@row_number + 1) AS place FROM server WHERE bot = 1 ORDER BY upCount DESC, upTime, id) AS temp using(id)
+	  LEFT JOIN (SELECT servId as id, SUM(rate) as rating FROM rating WHERE servId = ?) AS rating using(id)
+	  LEFT JOIN (SELECT servId as id, COUNT(*) as comments FROM comments WHERE servId = ?) AS comments using(id)
+	  WHERE id = ?`,
+		[interaction.guildId, interaction.guildId, interaction.guildId]
+	);
+
+	const endDate = new Date();
+	endDate.setMonth(
+		endDate.getDate() > 15 || (endDate.getDate() === 15 && endDate.getHours() > 12)
+			? endDate.getMonth() + 1
+			: endDate.getMonth(),
+		endDate.getDate() > 15 ||
+			(endDate.getDate() === 15 && endDate.getHours() > 12) ||
+			(endDate.getDate() === 1 && endDate.getHours() < 12)
+			? 1
+			: 15
+	);
+	endDate.setHours(12, 0);
 
 	let embed = new MessageEmbed()
 		.setAuthor(
@@ -10,10 +40,10 @@ export default async function (interaction) {
 			interaction.guild.iconURL(),
 			'https://server-discord.com/' + interaction.guildId
 		)
-		.setColor('#7289DA')
+		.setColor(colors.blue)
 		.addField(
 			'Продвижение:',
-			`${emojis.owner} Место на сайте: **${guild.place}**\n${emojis.ups} Всего UP очков: **${guild.up}**`,
+			`${emojis.owner} Место на сайте: **${guild.place}**\n${emojis.ups} Всего UP очков: **${guild.upCount}**`,
 			true
 		)
 		.addField(
@@ -23,12 +53,18 @@ export default async function (interaction) {
 		)
 		.addField(
 			'Буст:',
-			guild.boost.type
-				? `«**${guild.boost.type}**», до <t:${Math.floor(guild.boost.time / 1000)}:D>`
+			guild.boost
+				? `«**Boost ${boosts[guild.boost]}**», до <t:${Math.floor(guild.boostTime / 1000)}:D>`
 				: '[Отсутсвует](https://server-discord.com/boost)'
 		)
-		.addField('Значки: ', `${emojis.spamhunt} — Охотник на спамеров\n${emojis.youtube} — Ютубер`)
-		.setFooter('Новый сезон через: 3 дня');
+		.addField(
+			'Значки: ',
+			emojis
+				.filter(({ id }) => guild.status & id)
+				.map(({ name, icon }) => icon + ' - ' + name)
+				.join('\n')
+		)
+		.setFooter('Новый сезон через ' + beforeDate(endDate));
 
 	interaction.reply({ embeds: [embed] });
 }
