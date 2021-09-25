@@ -21,6 +21,8 @@ export default async function (interaction) {
 		[interaction.guildId, interaction.guildId, interaction.guildId]
 	);
 
+	const pins = emojis.pins.filter(({ id }) => guild.status & id);
+
 	const endDate = new Date();
 	endDate.setMonth(
 		endDate.getDate() > 15 || (endDate.getDate() === 15 && endDate.getHours() > 12)
@@ -57,13 +59,7 @@ export default async function (interaction) {
 				? `«**Boost ${boosts[guild.boost]}**», до <t:${Math.floor(guild.boostTime / 1000)}:D>`
 				: '[Отсутсвует](https://server-discord.com/boost)'
 		)
-		.addField(
-			'Значки: ',
-			emojis.pins
-				.filter(({ id }) => guild.status & id)
-				.map(({ name, icon }) => icon + ' - ' + name)
-				.join('\n')
-		)
+		.addField('Значки: ', pins.length ? pins.map(({ name, icon }) => icon + ' - ' + name).join('\n') : 'Не выданы')
 		.setFooter('Новый сезон через ' + beforeDate(endDate));
 
 	interaction.reply({ embeds: [embed] });
