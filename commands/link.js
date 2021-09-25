@@ -8,7 +8,7 @@ export default async function (interaction) {
 	const socials = await db.one('SELECT * FROM userUrls WHERE id = ?', [interaction.guild.id]);
 	console.log(socials);
 
-	if (!socials?.[social]) {
+	if (!socials?.[social !== 'custom' ? social : 'website']) {
 		interaction.reply({ content: 'Такая ссылка у сервера не задана!', ephemeral: true });
 		return;
 	}
@@ -17,7 +17,7 @@ export default async function (interaction) {
 	const embed = new MessageEmbed()
 		.setColor(colors.blue)
 		.setFooter('Ссылка, указанная на сайте мониторинга.')
-		.setAuthor(link.name, link.icon, link.url + socials?.[social] ?? '');
+		.setAuthor(link.name, link.icon, link.url + socials?.[social !== 'custom' ? social : 'website'] ?? '');
 
 	interaction.reply({ embeds: [embed] });
 }
