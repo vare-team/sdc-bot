@@ -21,7 +21,7 @@ export default async function (interaction) {
 	const guild = await db.one('SELECT upTime, status, boost, upCount FROM server WHERE id = ?', [interaction.guildId]);
 
 	if (Date.now() - guild.upTime <= 4 * 36e5) {
-		const sendDate = Math.floor((guild.upTime + 4 * 36e5) / 1000);
+		const sendDate = Math.floor((+guild.upTime + 4 * 36e5) / 1000);
 		embed.setDescription(`Up <t:${sendDate}:R>: <t:${sendDate}:T>`).setColor(colors.red);
 		await interaction.reply({ embeds: [embed] });
 		return;

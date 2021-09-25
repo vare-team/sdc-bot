@@ -17,6 +17,6 @@ export default {
 	custom: {
 		name: 'Веб сайт',
 		icon: '',
-		url: 'https://vk.com/',
+		url: 'https://',
 	},
 };

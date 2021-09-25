@@ -16,7 +16,7 @@ export default async function (interaction) {
 	  LEFT JOIN boost using(id)
 	  LEFT JOIN (SELECT id, (@row_number:=@row_number + 1) AS place FROM server WHERE bot = 1 ORDER BY upCount DESC, upTime, id) AS temp using(id)
 	  LEFT JOIN (SELECT servId as id, SUM(rate) as rating FROM rating WHERE servId = ?) AS rating using(id)
-	  LEFT JOIN (SELECT servId as id, COUNT(*) as comments FROM comments WHERE servId = ?) AS comments using(id)
+	  LEFT JOIN (SELECT servId as id, COUNT(*) as comments FROM comments WHERE servId = ?) AS с using(id)
 	  WHERE id = ?`,
 		[interaction.guildId, interaction.guildId, interaction.guildId]
 	);
@@ -48,7 +48,7 @@ export default async function (interaction) {
 		)
 		.addField(
 			'Информация:',
-			`${emojis.rating} Рейтинг: **${guild.rating}**\n${emojis.comment} Отзывов: **${guild.comments}**`,
+			`${emojis.rating} Рейтинг: **${guild.rating ?? 0}**\n${emojis.comment} Отзывов: **${guild.comments ?? 0}**`,
 			true
 		)
 		.addField(
