@@ -34,7 +34,7 @@ export default async function (interaction) {
 		const file = new MessageAttachment(captcha(codes[interaction.guildId][interaction.user.id].code), 'code.jpeg');
 		embed
 			.setImage('attachment://code.jpeg')
-			.setDescription('Введите число, написанное на изображении, используя команду ``/up XXXX``')
+			.setDescription('Введите число, написанное на изображении, используя команду `/up XXXX`')
 			.setColor(colors.blue)
 			.setFooter('Данный код будет действителен в течении 1 минуты!');
 
@@ -45,7 +45,7 @@ export default async function (interaction) {
 	embed.setFooter(interaction.user.tag, interaction.user.displayAvatarURL());
 
 	if (!codes[interaction.guildId]?.[interaction.user.id]?.code) {
-		embed.setDescription('Введите ``/up`` без кода, что бы его сгенерировать!').setColor(colors.yellow);
+		embed.setDescription('Введите `/up` без кода, что бы его сгенерировать!').setColor(colors.yellow);
 		await interaction.reply({ ephemeral: true, embeds: [embed] });
 		return;
 	}
@@ -57,7 +57,7 @@ export default async function (interaction) {
 	}
 
 	if (Date.now() - codes[interaction.guildId][interaction.user.id].time > 60 * 1e3) {
-		embed.setDescription('Срок действия кода истёк!\nПолучите новый, прописав команду ``/up``!').setColor(colors.red);
+		embed.setDescription('Срок действия кода истёк!\nПолучите новый, прописав команду `/up`!').setColor(colors.red);
 		await interaction.reply({ ephemeral: true, embeds: [embed] });
 		return;
 	}
