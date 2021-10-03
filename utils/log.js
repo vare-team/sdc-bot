@@ -11,6 +11,6 @@ export default function (log, shardId) {
 			('00' + date.getMinutes()).slice(-2) +
 			':' +
 			('00' + date.getSeconds()).slice(-2)
-		} : Shard[${shardId ?? bot.shard.ids}] | ${log}`
+		} : Shard[${shardId ?? bot.shard.ids[0]}] | ${log}`
 	);
 }
