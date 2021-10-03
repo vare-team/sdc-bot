@@ -1,8 +1,18 @@
-import { Client, Intents } from 'discord.js';
+import { Client, Intents, Options } from 'discord.js';
 import readyEvent from './events/ready';
 import log from './utils/log';
 
-const bot = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const bot = new Client({
+	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+	makeCache: Options.cacheWithLimits({
+		MessageManager: { maxSize: 0 },
+		ThreadManager: { maxSize: 0 },
+		UserManager: { maxSize: 0 },
+		GuildMemberManager: { maxSize: 0 },
+		GuildBanManager: { maxSize: 0 },
+	}),
+});
+
 global.bot = bot;
 
 bot.on('ready', readyEvent);
