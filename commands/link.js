@@ -5,7 +5,7 @@ import colors from '../models/colors';
 
 export default async function (interaction) {
 	const social = interaction.options.getString('сайт');
-	const socials = await db.one('SELECT * FROM userUrls WHERE id = ?', [interaction.guild.id]);
+	const socials = await db.one('SELECT * FROM userUrls WHERE id = ?', [interaction.guildId]);
 	console.log(socials);
 
 	if (!socials?.[social !== 'custom' ? social : 'website']) {
