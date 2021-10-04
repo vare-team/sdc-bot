@@ -19,9 +19,9 @@ export default async function (interaction) {
 	for (let i = 0, length = bot.shard.count; i < length; i++) {
 		embed.addField(
 			`${i + 1}. ${shardNames[i]} ${i === bot.shard.ids[0] ? '←' : ''}`,
-			`Серверов: \`\`${guilds[i]}\`\`, Пользователи: \`\`${users[i]}\`\`, Каналы: \`\`${
+			`Серверов: \`${guilds[i]}\`, Пользователи: \`${users[i]}\`, Каналы: \`${
 				channels[i]
-			}\`\`, Пинг: \`\`${Math.floor(pings[i])} мс\`\`, ОЗУ: \`\`${memory[i]} МБ\`\``
+			}\`, Пинг: \`${Math.floor(pings[i])} мс\`, ОЗУ: \`${memory[i]} МБ\``
 		);
 	}
 
