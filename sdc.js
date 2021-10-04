@@ -8,9 +8,10 @@ const bot = new Client({
 	makeCache: Options.cacheWithLimits({
 		MessageManager: { maxSize: 0 },
 		ThreadManager: { maxSize: 0 },
-		// UserManager: { maxSize: 0 },
+		UserManager: { maxSize: 0 },
 		GuildMemberManager: { maxSize: 0 },
 		GuildBanManager: { maxSize: 0 },
+		ChannelManager: { maxSize: 0 },
 	}),
 });
 
