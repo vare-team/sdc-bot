@@ -13,7 +13,7 @@ export default [
 	'Dusk',
 	'Lambent',
 	'Lucent',
-	'Goldenblad',
+	'Goldenblood',
 	'Rampage',
 	'Buu',
 	'Fluttershy',
