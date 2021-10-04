@@ -61,14 +61,14 @@ export default async function (interaction) {
 			await interaction.reply({ ephemeral: true, embeds: [embed] });
 			return;
 		}
-	}
 
-	const { upTime: upTimeDB } = await db.one('SELECT upTime FROM server WHERE id = ?', [interaction.guildId]);
-	if (Date.now() - upTimeDB <= 4 * 36e5) {
-		const sendDate = Math.floor((upTimeDB + 4 * 36e5) / 1000);
-		embed.setDescription(`Up <t:${sendDate}:R>: <t:${sendDate}:T>`).setColor(colors.red);
-		await interaction.reply({ embeds: [embed] });
-		return;
+		const { upTime: upTimeDB } = await db.one('SELECT upTime FROM server WHERE id = ?', [interaction.guildId]);
+		if (Date.now() - upTimeDB <= 4 * 36e5) {
+			const sendDate = Math.floor((upTimeDB + 4 * 36e5) / 1000);
+			embed.setDescription(`Up <t:${sendDate}:R>: <t:${sendDate}:T>`).setColor(colors.red);
+			await interaction.reply({ embeds: [embed] });
+			return;
+		}
 	}
 
 	const upTime = new Date();
@@ -90,7 +90,18 @@ export default async function (interaction) {
 		.setDescription(`**Успешный Up!**\nВремя фиксации апа: <t:${Math.floor(+upTime / 1000)}:T>`)
 		.setColor(colors.green);
 
-	if (guild.boost) embed.addField('Буст информация:', `${emojis.ups} Всего UP: **${upCount}**`);
+	if (guild.boost) {
+		await db.query('SET @row_number = 0');
+		const { place } = await db.one(
+			`SELECT place FROM (SELECT id, (@row_number := @row_number + 1) AS place FROM server WHERE bot = 1 ORDER BY upCount DESC, upTime, id) as t WHERE id = ?`,
+			[interaction.guildId]
+		);
+
+		embed.addField(
+			'Буст информация:',
+			`${emojis.owner} Место на сайте: **${place}**\n${emojis.ups} Всего UP очков: **${upCount}**`
+		);
+	}
 
 	await interaction.reply({ embeds: [embed] });
 
