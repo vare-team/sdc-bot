@@ -28,7 +28,7 @@ export default async function (interaction) {
 		return;
 	}
 
-	if (guild.boost === 0) {
+	if (!guild.boost) {
 		if (!code) {
 			if (!codes[interaction.guildId]) codes[interaction.guildId] = {};
 			codes[interaction.guildId][interaction.user.id] = { code: randomInt(1000, 9999), time: Date.now() };
@@ -63,8 +63,6 @@ export default async function (interaction) {
 		}
 	}
 
-	embed.setFooter(interaction.user.tag, interaction.user.displayAvatarURL());
-
 	const { upTime: upTimeDB } = await db.one('SELECT upTime FROM server WHERE id = ?', [interaction.guildId]);
 	if (Date.now() - upTimeDB <= 4 * 36e5) {
 		const sendDate = Math.floor((upTimeDB + 4 * 36e5) / 1000);
@@ -96,7 +94,7 @@ export default async function (interaction) {
 
 	await interaction.reply({ embeds: [embed] });
 
-	if (guild.boost === 0) {
+	if (!guild.boost) {
 		delete codes[interaction.guildId][interaction.user.id];
 		if (Object.keys(codes[interaction.guildId]).length === 0) delete codes[interaction.guildId];
 	}
