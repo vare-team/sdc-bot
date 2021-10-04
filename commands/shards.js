@@ -23,7 +23,7 @@ export default async function (interaction) {
 	}
 
 	embed.addField('​', '​');
-	embed.addField(`Всего: ${bot.shard.count}`, `Серверов: \`${sum(guilds)}\`, ОЗУ: \`${sum(memory)} МБ\``);
+	embed.addField(`Всего: ${bot.shard.count}`, `Серверов: \`${sum(guilds)}\`, ОЗУ: \`${sum(memory).toFixed(2)} МБ\``);
 
 	interaction.reply({ embeds: [embed], ephemeral });
 }
