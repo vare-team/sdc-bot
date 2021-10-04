@@ -11,6 +11,7 @@ const bot = new Client({
 		UserManager: { maxSize: 0 },
 		GuildMemberManager: { maxSize: 0 },
 		GuildBanManager: { maxSize: 0 },
+		ChannelManager: { maxSize: 0 },
 	}),
 });
 
