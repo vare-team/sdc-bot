@@ -38,7 +38,7 @@ export default async function (interaction) {
 				.setImage('attachment://code.jpeg')
 				.setDescription('Введите число, написанное на изображении, используя команду `/up XXXX`')
 				.setColor(colors.blue)
-				.setFooter('Данный код будет действителен в течении 1 минуты!');
+				.setFooter('Данный код будет действителен в течении 15 секунд!');
 
 			await interaction.reply({ ephemeral: true, embeds: [embed], files: [file] });
 			return;
@@ -56,7 +56,7 @@ export default async function (interaction) {
 			return;
 		}
 
-		if (Date.now() - codes[interaction.guildId][interaction.user.id].time > 60 * 1e3) {
+		if (Date.now() - codes[interaction.guildId][interaction.user.id].time > 15 * 1e3) {
 			embed.setDescription('Срок действия кода истёк!\nПолучите новый, прописав команду `/up`!').setColor(colors.red);
 			await interaction.reply({ ephemeral: true, embeds: [embed] });
 			return;
