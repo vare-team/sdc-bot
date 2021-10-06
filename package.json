@@ -1,6 +1,6 @@
 {
   "name": "sdc",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "canvas": "^2.8.0",
-    "discord.js": "^13.1.0",
+    "discord.js": "^13.2.0",
     "mysql2": "^2.3.0"
   },
   "devDependencies": {
