@@ -4,7 +4,11 @@ import shardNames from '../models/shardNames';
 
 const sum = values => values.reduce((p, v) => p + v, 0);
 
-export default async function (interaction) {
+export const helpers = {
+	ephemeral: true,
+};
+
+export async function run(interaction) {
 	const embed = new MessageEmbed()
 		.setAuthor(bot.user.username, bot.user.avatarURL(), 'https://server-discord.com')
 		.setFooter(`Шард сервера: ${shardNames[bot.shard.ids[0]]}`)
@@ -25,5 +29,10 @@ export default async function (interaction) {
 	embed.addField('​', '​');
 	embed.addField(`Всего: ${bot.shard.count}`, `Серверов: \`${sum(guilds)}\`, ОЗУ: \`${sum(memory).toFixed(2)} МБ\``);
 
-	interaction.reply({ embeds: [embed], ephemeral });
+	await interaction.editReply({ embeds: [embed], ephemeral: interaction.options.getBoolean('ephemeral') ?? true });
 }
+
+export default {
+	helpers,
+	run,
+};

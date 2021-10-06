@@ -5,7 +5,11 @@ import colors from '../models/colors';
 import boosts from '../models/boosts';
 import beforeDate from '../utils/beforeDate';
 
-export default async function (interaction) {
+export const helpers = {
+	ephemeral: false,
+};
+
+export async function run(interaction) {
 	await db.query('SET @row_number = 0');
 
 	/**
@@ -62,5 +66,10 @@ export default async function (interaction) {
 		.addField('Значки: ', pins.length ? pins.map(({ name, icon }) => icon + ' - ' + name).join('\n') : 'Не выданы')
 		.setFooter('Новый сезон через ' + beforeDate(endDate));
 
-	interaction.reply({ embeds: [embed] });
+	await interaction.editReply({ embeds: [embed] });
 }
+
+export default {
+	helpers,
+	run,
+};

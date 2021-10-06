@@ -8,7 +8,11 @@ import emojis from '../models/emojis';
 
 const codes = {};
 
-export default async function (interaction) {
+export const helpers = {
+	ephemeral: false,
+};
+
+export async function run(interaction) {
 	const code = interaction.options.getInteger('код');
 	const embed = new MessageEmbed().setAuthor(
 		interaction.guild.name,
@@ -24,7 +28,7 @@ export default async function (interaction) {
 	if (Date.now() - guild.upTime <= 4 * 36e5) {
 		const sendDate = Math.floor((+guild.upTime + 4 * 36e5) / 1000);
 		embed.setDescription(`Up <t:${sendDate}:R>: <t:${sendDate}:T>`).setColor(colors.red);
-		await interaction.reply({ embeds: [embed] });
+		await interaction.editReply({ embeds: [embed] });
 		return;
 	}
 
@@ -40,25 +44,29 @@ export default async function (interaction) {
 				.setColor(colors.blue)
 				.setFooter('Данный код будет действителен в течении 15 секунд!');
 
-			await interaction.reply({ ephemeral: true, embeds: [embed], files: [file] });
+			await interaction.deleteReply();
+			await interaction.followUp({ ephemeral: true, embeds: [embed], files: [file] });
 			return;
 		}
 
 		if (!codes[interaction.guildId]?.[interaction.user.id]?.code) {
 			embed.setDescription('Введите `/up` без кода, что бы его сгенерировать!').setColor(colors.yellow);
-			await interaction.reply({ ephemeral: true, embeds: [embed] });
+			await interaction.deleteReply();
+			await interaction.followUp({ ephemeral: true, embeds: [embed] });
 			return;
 		}
 
 		if (codes[interaction.guildId][interaction.user.id].code !== code) {
 			embed.setDescription('Код не верен!').setColor(colors.red);
-			await interaction.reply({ ephemeral: true, embeds: [embed] });
+			await interaction.deleteReply();
+			await interaction.followUp({ ephemeral: true, embeds: [embed] });
 			return;
 		}
 
 		if (Date.now() - codes[interaction.guildId][interaction.user.id].time > 15 * 1e3) {
 			embed.setDescription('Срок действия кода истёк!\nПолучите новый, прописав команду `/up`!').setColor(colors.red);
-			await interaction.reply({ ephemeral: true, embeds: [embed] });
+			await interaction.deleteReply();
+			await interaction.followUp({ ephemeral: true, embeds: [embed] });
 			return;
 		}
 
@@ -66,7 +74,7 @@ export default async function (interaction) {
 		if (Date.now() - upTimeDB <= 4 * 36e5) {
 			const sendDate = Math.floor((upTimeDB + 4 * 36e5) / 1000);
 			embed.setDescription(`Up <t:${sendDate}:R>: <t:${sendDate}:T>`).setColor(colors.red);
-			await interaction.reply({ embeds: [embed] });
+			await interaction.editReply({ embeds: [embed] });
 			return;
 		}
 	}
@@ -103,10 +111,15 @@ export default async function (interaction) {
 		);
 	}
 
-	await interaction.reply({ embeds: [embed] });
+	await interaction.editReply({ embeds: [embed] });
 
 	if (!guild.boost) {
 		delete codes[interaction.guildId][interaction.user.id];
 		if (Object.keys(codes[interaction.guildId]).length === 0) delete codes[interaction.guildId];
 	}
 }
+
+export default {
+	helpers,
+	run,
+};

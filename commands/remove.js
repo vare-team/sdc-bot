@@ -3,14 +3,18 @@ import db from '../services/db';
 import colors from '../models/colors';
 import log from '../utils/log';
 
-export default async function (interaction) {
+export const helpers = {
+	ephemeral: false,
+};
+
+export async function run(interaction) {
 	if (interaction.guildId !== '669867414409969664') return;
 
 	const id = interaction.options.getString('id');
-	if (!id) return interaction.reply({ content: 'ID не валидный!' });
+	if (!id) return interaction.editReply({ content: 'ID не валидный!' });
 
 	const guild = await bot.guilds.fetch(id);
-	if (!guild) return interaction.reply({ content: 'Гильдия не найдена!' });
+	if (!guild) return interaction.editReply({ content: 'Гильдия не найдена!' });
 
 	await guild.leave();
 	await db.query('DELETE FROM server WHERE id = ?', [id]);
@@ -23,5 +27,10 @@ export default async function (interaction) {
 		.setTimestamp()
 		.setFooter(interaction.user.tag);
 
-	interaction.reply({ embeds: [embed] });
+	await interaction.editReply({ embeds: [embed] });
 }
+
+export default {
+	helpers,
+	run,
+};
