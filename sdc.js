@@ -11,15 +11,19 @@ const bot = new Client({
 		UserManager: { maxSize: 0 },
 		GuildMemberManager: { maxSize: 0 },
 		GuildBanManager: { maxSize: 0 },
-		ChannelManager: { maxSize: 0 },
+		// ChannelManager: { maxSize: 0 },
 	}),
 });
 
 global.bot = bot;
 
-bot.on('ready', readyEvent);
-
-bot.login().then(() => {
-	log('Bot Authorized');
-	setInterval(changePresence, 30000);
+process.on('message', m => {
+	if (m === 'startPresence') {
+		changePresence();
+		setInterval(changePresence, 30e3);
+	}
 });
+
+bot.once('ready', readyEvent);
+
+bot.login().then(() => log('Bot Authorized'));

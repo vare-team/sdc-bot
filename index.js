@@ -10,5 +10,6 @@ const shardManager = new ShardingManager('./sdc.js', {
 shardManager.on('shardCreate', shard => log(`Shard spawned!`, shard.id));
 
 (async () => {
-	await shardManager.spawn();
+	const shards = await shardManager.spawn();
+	for (const [, shard] of shards) shard.process.send('startPresence');
 })();
