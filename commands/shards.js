@@ -14,10 +14,11 @@ export async function run(interaction) {
 		.setFooter(`Шард сервера: ${shardNames[bot.shard.ids[0]]}`)
 		.setColor(colors.blue);
 
-	const ephemeral = interaction.options.getBoolean('ephemeral') ?? true;
-	const guilds = await bot.shard.fetchClientValues('guilds.cache.size');
-	const pings = await bot.shard.broadcastEval(c => c.ws.ping.toFixed(0));
-	const memory = await bot.shard.broadcastEval(() => +(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2));
+	const [guilds, pings, memory] = await Promise.all([
+		bot.shard.fetchClientValues('guilds.cache.size'),
+		bot.shard.broadcastEval(c => c.ws.ping.toFixed(0)),
+		bot.shard.broadcastEval(() => +(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)),
+	]);
 
 	for (let i = 0, length = bot.shard.count; i < length; i++) {
 		embed.addField(
