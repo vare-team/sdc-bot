@@ -1,4 +1,5 @@
 import commands from '../commands';
+import log from '../utils/log';
 
 export default async function (interaction) {
 	if (!interaction.inGuild() || !interaction.isCommand()) return;
@@ -9,6 +10,10 @@ export default async function (interaction) {
 	try {
 		await command.run(interaction);
 	} catch (e) {
-		console.warn(e);
+		if (e.code === 10062) {
+			log(interaction.commandName + ' | ' + e.message);
+		} else {
+			console.warn(e);
+		}
 	}
 }
