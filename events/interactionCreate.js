@@ -10,6 +10,7 @@ export default async function (interaction) {
 	try {
 		await command.run(interaction);
 	} catch (e) {
+    await interaction.editReply({content: 'Произошла ошибка при выполнении команды. Обратитесь на сервер поддержки Vare.\n' + e.message})
 		if (e.code === 10062) {
 			log(interaction.commandName + ' | ' + e.message);
 		} else {
