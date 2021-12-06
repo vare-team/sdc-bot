@@ -28,7 +28,7 @@ export async function run(interaction) {
 	if (Date.now() - guild.upTime <= 4 * 36e5) {
 		const sendDate = Math.floor((+guild.upTime + 4 * 36e5) / 1000);
 		embed.setDescription(`Up <t:${sendDate}:R>: <t:${sendDate}:T>`).setColor(colors.red);
-		await interaction.editReply({ embeds: [embed] });
+		await interaction.editSend({ embeds: [embed] });
 		return;
 	}
 
@@ -44,28 +44,28 @@ export async function run(interaction) {
 				.setColor(colors.blue)
 				.setFooter('Данный код будет действителен в течении 15 секунд!');
 
-			await interaction.deleteReply();
+			await interaction.deleteSend();
 			await interaction.followUp({ ephemeral: true, embeds: [embed], files: [file] });
 			return;
 		}
 
 		if (!codes[interaction.guildId]?.[interaction.user.id]?.code) {
 			embed.setDescription('Введите `/up` без кода, что бы его сгенерировать!').setColor(colors.yellow);
-			await interaction.deleteReply();
+			await interaction.deleteSend();
 			await interaction.followUp({ ephemeral: true, embeds: [embed] });
 			return;
 		}
 
 		if (codes[interaction.guildId][interaction.user.id].code !== code) {
 			embed.setDescription('Код не верен!').setColor(colors.red);
-			await interaction.deleteReply();
+			await interaction.deleteSend();
 			await interaction.followUp({ ephemeral: true, embeds: [embed] });
 			return;
 		}
 
 		if (Date.now() - codes[interaction.guildId][interaction.user.id].time > 15 * 1e3) {
 			embed.setDescription('Срок действия кода истёк!\nПолучите новый, прописав команду `/up`!').setColor(colors.red);
-			await interaction.deleteReply();
+			await interaction.deleteSend();
 			await interaction.followUp({ ephemeral: true, embeds: [embed] });
 			return;
 		}
@@ -74,7 +74,7 @@ export async function run(interaction) {
 		if (Date.now() - upTimeDB <= 4 * 36e5) {
 			const sendDate = Math.floor((upTimeDB + 4 * 36e5) / 1000);
 			embed.setDescription(`Up <t:${sendDate}:R>: <t:${sendDate}:T>`).setColor(colors.red);
-			await interaction.editReply({ embeds: [embed] });
+			await interaction.editSend({ embeds: [embed] });
 			return;
 		}
 	}
@@ -111,7 +111,7 @@ export async function run(interaction) {
 		);
 	}
 
-	await interaction.editReply({ embeds: [embed] });
+	await interaction.editSend({ embeds: [embed] });
 
 	if (!guild.boost) {
 		delete codes[interaction.guildId][interaction.user.id];
