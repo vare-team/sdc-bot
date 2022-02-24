@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"sdc/models"
 	"sdc/service"
@@ -18,7 +17,7 @@ func Up(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 		captchaKey := service.RandomString(4, "1234567890")
 		captchaImage := service.GenerateCaptcha(captchaKey)
 
-		codeBase[interaction.GuildID+interaction.ChannelID] = models.Codes{
+		codeBase[interaction.GuildID+interaction.Member.User.ID] = models.Codes{
 			Code:      captchaKey,
 			TimeStamp: time.Now().Unix(),
 		}
@@ -59,9 +58,7 @@ func Up(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 
 	enteredCode := interaction.ApplicationCommandData().Options[0].IntValue()
 
-	if generatedCode, ok := codeBase[interaction.GuildID+interaction.ChannelID]; ok {
-
-		fmt.Println(time.Now().Unix(), generatedCode.TimeStamp)
+	if generatedCode, ok := codeBase[interaction.GuildID+interaction.Member.User.ID]; ok {
 
 		if time.Now().Unix() > generatedCode.TimeStamp+15 {
 			session.InteractionRespond(interaction.Interaction, &discordgo.InteractionResponse{
@@ -86,7 +83,6 @@ func Up(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 		}
 
 		if generatedCode.Code == strconv.Itoa(int(enteredCode)) {
-
 			session.InteractionRespond(interaction.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
@@ -103,8 +99,7 @@ func Up(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 					},
 				},
 			})
-
-			delete(codeBase, interaction.GuildID+interaction.ChannelID)
+			delete(codeBase, interaction.GuildID+interaction.Member.User.ID)
 		} else {
 			session.InteractionRespond(interaction.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -123,11 +118,7 @@ func Up(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 					Flags: 1 << 6,
 				},
 			})
-
-			return
 		}
-
-		return
 	} else {
 		session.InteractionRespond(interaction.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -146,7 +137,5 @@ func Up(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 				Flags: 1 << 6,
 			},
 		})
-
-		return
 	}
 }
