@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-const imageWidth, imageHeight = 300, 80
+const imageWidth, imageHeight = 300, 60
 
 func GenerateCaptcha(text string) *bytes.Buffer {
 	font, _ := truetype.Parse(goregular.TTF)

@@ -6,5 +6,9 @@ import (
 )
 
 func InteractionCreate(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
-	commands.Up(session, interaction)
+	switch interaction.ApplicationCommandData().Name {
+	case "up":
+		commands.Up(session, interaction)
+		break
+	}
 }

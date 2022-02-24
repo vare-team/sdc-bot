@@ -4,13 +4,47 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"sdc/models"
 	"sdc/service"
+	"strconv"
+	"time"
 )
+
+var codeBase = make(map[string]models.Codes)
 
 func Up(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 	guild, _ := session.Guild(interaction.GuildID)
 
+	enteredCode := interaction.ApplicationCommandData().Options[0]
+
+	if generatedCode, ok := codeBase[interaction.GuildID+interaction.ChannelID]; ok && enteredCode.IntValue() != 0 {
+
+		if generatedCode.Code == strconv.Itoa(int(enteredCode.IntValue())) {
+			session.InteractionRespond(interaction.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: "yes",
+				},
+			})
+
+			delete(codeBase, interaction.GuildID+interaction.ChannelID)
+		} else {
+			session.InteractionRespond(interaction.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: "no",
+				},
+			})
+		}
+
+		return
+	}
+
 	captchaKey := service.RandomString(4, "1234567890")
 	captchaImage := service.GenerateCaptcha(captchaKey)
+
+	codeBase[interaction.GuildID+interaction.ChannelID] = models.Codes{
+		Code:      captchaKey,
+		TimeStamp: time.Now(),
+	}
 
 	session.InteractionRespond(interaction.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -39,6 +73,7 @@ func Up(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 					},
 				},
 			},
+			Flags: 1 << 6,
 		},
 	})
 }
