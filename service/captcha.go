@@ -2,17 +2,25 @@ package service
 
 import (
 	"bytes"
+	"fmt"
+	"sdc/models"
+	"strings"
+
 	"github.com/fogleman/gg"
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font/gofont/goregular"
-	"sdc/models"
-	"strings"
 )
 
-const imageWidth, imageHeight = 300, 60
+const (
+	imageWidth  = 300
+	imageHeight = 60
+)
 
-func GenerateCaptcha(text string) *bytes.Buffer {
-	font, _ := truetype.Parse(goregular.TTF)
+func GenerateCaptcha(text string) (*bytes.Buffer, error) {
+	font, err := truetype.Parse(goregular.TTF)
+	if err != nil {
+		return nil, fmt.Errorf("cannot parse ttf: %w", err)
+	}
 
 	startPixel := RandomInt(20, 80)
 
@@ -48,7 +56,10 @@ func GenerateCaptcha(text string) *bytes.Buffer {
 	}
 
 	buf := bytes.NewBuffer(nil)
-	canvas.EncodePNG(buf)
+	err = canvas.EncodePNG(buf)
+	if err != nil {
+		return nil, fmt.Errorf("cannot encode image: %w", err)
+	}
 
-	return buf
+	return buf, nil
 }

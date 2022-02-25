@@ -1,25 +1,25 @@
 ```mermaid
 classDiagram
 
-main --|> eventHandlers
+main --|> events
 
-sdccommands --|> Info
-sdccommands --|> Link
+commands --|> Info
+commands --|> Link
 
-sdccommands --|> Up
-Capcha --|> Up
+commands --|> Up
+Captcha --|> Up
 
-Colours --|> Capcha
+Colors --|> Captcha
 
-eventHandlers --|> MessageCreate
-eventHandlers --|> IteractionCreate
+events --|> MessageCreate
+events --|> IteractionCreate
 
 IteractionCreate --|> sdccommands
 
-sdcmodels *-- Colours
+models *-- Colors
 
-sdcservice *-- Capcha
-sdcservice *-- RandomInt
+service *-- Captcha
+service *-- Random int
 
-RandomInt --|> Capcha
+Random Int --|> Capcha
 ```
