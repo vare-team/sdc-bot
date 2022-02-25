@@ -11,7 +11,7 @@ var Colors = [8]string{
 	"007633EE",
 }
 
-var EmbedColours = map[string]int{
+var EmbedColors = map[string]int{
 	"blue":   7506394,
 	"red":    15746887,
 	"green":  4437377,

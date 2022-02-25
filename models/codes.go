@@ -1,6 +1,8 @@
 package models
 
+import "time"
+
 type Codes struct {
 	Code      string
-	TimeStamp int64
+	Timestamp time.Time
 }

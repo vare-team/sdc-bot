@@ -1,11 +1,12 @@
 package commands
 
 import (
-	"github.com/bwmarrin/discordgo"
 	"sdc/models"
 	"sdc/service"
 	"strconv"
 	"time"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 var codeBase = make(map[string]models.Codes)
@@ -15,11 +16,11 @@ func Up(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 
 	if len(interaction.ApplicationCommandData().Options) < 1 {
 		captchaKey := service.RandomString(4, "1234567890")
-		captchaImage := service.GenerateCaptcha(captchaKey)
+		captchaImage, _ := service.GenerateCaptcha(captchaKey)
 
 		codeBase[interaction.GuildID+interaction.Member.User.ID] = models.Codes{
 			Code:      captchaKey,
-			TimeStamp: time.Now().Unix(),
+			Timestamp: time.Now(),
 		}
 
 		session.InteractionRespond(interaction.Interaction, &discordgo.InteractionResponse{
@@ -35,7 +36,7 @@ func Up(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 				Embeds: []*discordgo.MessageEmbed{
 					{
 						Description: "Введите число, написанное на изображении, используя команду `/up [код:]`",
-						Color:       models.EmbedColours["blue"],
+						Color:       models.EmbedColors["blue"],
 						Author: &discordgo.MessageEmbedAuthor{
 							Name:    guild.Name,
 							URL:     "https://server-discord.com/" + interaction.GuildID,
@@ -60,14 +61,14 @@ func Up(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 
 	if generatedCode, ok := codeBase[interaction.GuildID+interaction.Member.User.ID]; ok {
 
-		if time.Now().Unix() > generatedCode.TimeStamp+15 {
+		if time.Now().Sub(generatedCode.Timestamp) > time.Second*15 {
 			session.InteractionRespond(interaction.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
 					Embeds: []*discordgo.MessageEmbed{
 						{
 							Description: "Срок действия кода истёк!\nПолучите новый, прописав команду `/up`!",
-							Color:       models.EmbedColours["red"],
+							Color:       models.EmbedColors["red"],
 							Author: &discordgo.MessageEmbedAuthor{
 								Name:    guild.Name,
 								URL:     "https://server-discord.com/" + interaction.GuildID,
@@ -89,7 +90,7 @@ func Up(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 					Embeds: []*discordgo.MessageEmbed{
 						{
 							Description: "**Успешный Up!**\nВремя фиксации апа: <t:" + strconv.FormatInt(time.Now().Unix(), 10) + ":T>",
-							Color:       models.EmbedColours["green"],
+							Color:       models.EmbedColors["green"],
 							Author: &discordgo.MessageEmbedAuthor{
 								Name:    guild.Name,
 								URL:     "https://server-discord.com/" + interaction.GuildID,
@@ -107,7 +108,7 @@ func Up(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 					Embeds: []*discordgo.MessageEmbed{
 						{
 							Description: "Введённое число не верно!",
-							Color:       models.EmbedColours["red"],
+							Color:       models.EmbedColors["red"],
 							Author: &discordgo.MessageEmbedAuthor{
 								Name:    guild.Name,
 								URL:     "https://server-discord.com/" + interaction.GuildID,
@@ -126,7 +127,7 @@ func Up(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 				Embeds: []*discordgo.MessageEmbed{
 					{
 						Description: "Введите `/up` без кода, что бы его сгенерировать!",
-						Color:       models.EmbedColours["yellow"],
+						Color:       models.EmbedColors["yellow"],
 						Author: &discordgo.MessageEmbedAuthor{
 							Name:    guild.Name,
 							URL:     "https://server-discord.com/" + interaction.GuildID,
