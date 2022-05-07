@@ -93,9 +93,9 @@ export async function run(interaction) {
 	log(
 		`{Guild UP} Ups "${upCount}", User "${interaction.user.tag}" (${interaction.user.id}), Guild "${interaction.guild.name}" (${interaction.guildId}), Channel ID ${interaction.channelId}`
 	);
-
+	const nextUpDate = Math.floor((upTime + 4 * 36e5) / 1000);
 	embed
-		.setDescription(`**Успешный Up!**\nВремя фиксации апа: <t:${Math.floor(+upTime / 1000)}:T>`)
+		.setDescription(`**Успешный Up!**\nВремя фиксации апа: <t:${Math.floor(+upTime / 1000)}:T>\nСледующий Up <t:${nextUpDate}:R>: <t:${nextUpDate}:T>`)
 		.setColor(colors.green);
 
 	if (guild.boost) {
