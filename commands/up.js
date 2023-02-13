@@ -7,10 +7,7 @@ import colors from '../models/colors';
 import emojis from '../models/emojis';
 
 const codes = {};
-const webhook = new WebhookClient({
-	id: '1047575201879179284',
-	token: 'h5FCTv3STcLU025Sx6JB6S2sQxGVUytNxM7zfr_WbbBB69lUSoNqzPwK-vjMohSFLGMC',
-});
+const webhook = new WebhookClient({ url: process.env.WEBHOOK_URL });
 
 export const helpers = {
 	ephemeral: false,
