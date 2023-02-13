@@ -5,14 +5,17 @@
   "type": "module",
   "scripts": {
     "start": "node --unhandled-rejections=warn --experimental-specifier-resolution=node .",
-    "debug": "nodemon --unhandled-rejections=warn --experimental-specifier-resolution=node ."
+    "debug": "nodemon --unhandled-rejections=warn --experimental-specifier-resolution=node .",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix"
   },
   "engines": {
     "node": ">=16"
   },
   "dependencies": {
     "canvas": "^2.8.0",
-    "discord.js": "^13.2.0",
+    "cron": "^1.8.2",
+    "discord.js": "^13.3.1",
     "mysql2": "^2.3.0"
   },
   "devDependencies": {

@@ -32,7 +32,7 @@ export default function (code) {
 		ctx.quadraticCurveTo(randomInt(-50, 50), randomInt(0, canvas.height), canvas.width, randomInt(0, 80));
 		ctx.stroke();
 
-		ctx.font = types[randomInt(0, types.length - 1)] + ' 48px arial';
+		ctx.font = `${types[randomInt(0, types.length - 1)]} 48px arial`;
 		if (randomInt(0, 1) === 0) {
 			ctx.fillStyle = colors[randomInt(0, colors.length - 1)];
 			ctx.fillText(letter, startPixel, randomInt(40, 80));

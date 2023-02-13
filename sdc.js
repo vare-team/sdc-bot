@@ -2,6 +2,7 @@ import { Client, Intents, Options } from 'discord.js';
 import readyEvent from './events/ready';
 import log from './utils/log';
 import changePresence from './utils/changePresence';
+import { sync } from './services/cron';
 
 const bot = new Client({
 	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
@@ -21,6 +22,8 @@ process.on('message', m => {
 	if (m === 'startPresence') {
 		changePresence();
 		setInterval(changePresence, 30e3);
+
+		if (bot.shard.ids[0] === 0) sync.start();
 	}
 });
 

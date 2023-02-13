@@ -2,7 +2,6 @@ import { ShardingManager, Util } from 'discord.js';
 import log from './utils/log';
 
 const shardManager = new ShardingManager('./sdc.js', {
-	// mode: 'worker',
 	token: process.env.TOKEN,
 	execArgv: ['--unhandled-rejections=warn', '--experimental-specifier-resolution=node'],
 });
@@ -10,8 +9,10 @@ const shardManager = new ShardingManager('./sdc.js', {
 shardManager.on('shardCreate', shard => log(`Shard spawned!`, shard.id));
 
 (async () => {
-	const amount = await Util.fetchRecommendedShards(process.env.TOKEN, { guildsPerShard: 1000 });
-	log('Shards count: ' + amount, 'null');
+	const amount = await Util.fetchRecommendedShards(process.env.TOKEN, {
+		guildsPerShard: 1000,
+	});
+	log(`Shards count: ${amount}`, 'null');
 
 	shardManager.shardList = [...Array(amount).keys()];
 	shardManager.totalShards = amount;

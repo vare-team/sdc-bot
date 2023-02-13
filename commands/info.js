@@ -10,13 +10,11 @@ export const helpers = {
 };
 
 export async function run(interaction) {
-	await db.query('SET @row_number = 0');
-
 	/**
 	 * @type {{upCount: number, boost: number, boostTime: Date, status: number, place: number, rating: number, comments: number}}
 	 */
-	const guild = await db.one(
-		`SELECT upCount, boost, boostTime, status, place, rating, comments FROM server
+	const guild = await db.oneMulti(
+		`SET @row_number = 0; SELECT upCount, boost, boostTime, status, place, rating, comments FROM server
 	  LEFT JOIN boost using(id)
 	  LEFT JOIN (SELECT id, (@row_number:=@row_number + 1) AS place FROM server WHERE bot = 1 ORDER BY upCount DESC, upTime, id) AS temp using(id)
 	  LEFT JOIN (SELECT servId as id, SUM(rate) as rating FROM rating WHERE servId = ?) AS rating using(id)
@@ -40,11 +38,11 @@ export async function run(interaction) {
 	);
 	endDate.setHours(12, 0);
 
-	let embed = new MessageEmbed()
+	const embed = new MessageEmbed()
 		.setAuthor(
-			'Сервер «' + interaction.guild.name + '»',
+			`Сервер «${interaction.guild.name}»`,
 			interaction.guild.iconURL(),
-			'https://server-discord.com/' + interaction.guildId
+			`https://server-discord.com/${interaction.guildId}`
 		)
 		.setColor(colors.blue)
 		.addField(
@@ -63,8 +61,8 @@ export async function run(interaction) {
 				? `«**Boost ${boosts[guild.boost]}**», до <t:${Math.floor(guild.boostTime / 1000)}:D>`
 				: '[Отсутствует](https://server-discord.com/boost)'
 		)
-		.addField('Значки: ', pins.length ? pins.map(({ name, icon }) => icon + ' - ' + name).join('\n') : 'Не выданы')
-		.setFooter('Новый сезон через ' + beforeDate(endDate));
+		.addField('Значки: ', pins.length ? pins.map(({ name, icon }) => `${icon} - ${name}`).join('\n') : 'Не выданы')
+		.setFooter(`Новый сезон через ${beforeDate(endDate)}`);
 
 	await interaction.editReply({ embeds: [embed] });
 }

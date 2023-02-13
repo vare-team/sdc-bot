@@ -1,4 +1,4 @@
-import { MessageAttachment, MessageEmbed } from 'discord.js';
+import { MessageAttachment, MessageEmbed, WebhookClient } from 'discord.js';
 import randomInt from '../utils/random';
 import captcha from '../services/captcha';
 import db from '../services/db';
@@ -7,6 +7,10 @@ import colors from '../models/colors';
 import emojis from '../models/emojis';
 
 const codes = {};
+const webhook = new WebhookClient({
+	id: '1047575201879179284',
+	token: 'h5FCTv3STcLU025Sx6JB6S2sQxGVUytNxM7zfr_WbbBB69lUSoNqzPwK-vjMohSFLGMC',
+});
 
 export const helpers = {
 	ephemeral: false,
@@ -94,14 +98,23 @@ export async function run(interaction) {
 		`{Guild UP} Ups "${upCount}", User "${interaction.user.tag}" (${interaction.user.id}), Guild "${interaction.guild.name}" (${interaction.guildId}), Channel ID ${interaction.channelId}`
 	);
 
+	const logEmbed = new MessageEmbed()
+		.setDescription(
+			`Guild: **[${interaction.guild.name}](https://server-discord.com/${interaction.guildId})**\nUser: \`${
+				interaction.user.tag
+			}\` | \`${interaction.user.id}\`\n\nTimestamp: \`${upTime.getTime()}\``
+		)
+		.setColor('#4997D0')
+		.setFooter('Emitted by Slash Command');
+	await webhook.send({ embeds: [logEmbed] });
+
 	embed
 		.setDescription(`**Успешный Up!**\nВремя фиксации апа: <t:${Math.floor(+upTime / 1000)}:T>`)
 		.setColor(colors.green);
 
 	if (guild.boost) {
-		await db.query('SET @row_number = 0');
-		const { place } = await db.one(
-			`SELECT place FROM (SELECT id, (@row_number := @row_number + 1) AS place FROM server WHERE bot = 1 ORDER BY upCount DESC, upTime, id) as t WHERE id = ?`,
+		const { place } = await db.oneMulti(
+			`SET @row_number = 0; SELECT place FROM (SELECT id, (@row_number := @row_number + 1) AS place FROM server WHERE bot = 1 ORDER BY upCount DESC, upTime, id) as t WHERE id = ?`,
 			[interaction.guildId]
 		);
 

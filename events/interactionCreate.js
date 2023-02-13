@@ -11,7 +11,7 @@ export default async function (interaction) {
 		await command.run(interaction);
 	} catch (e) {
 		if (e.code === 10062) {
-			log(interaction.commandName + ' | ' + e.message);
+			log(`${interaction.commandName} | ${e.message}`);
 		} else {
 			console.warn(e);
 		}
