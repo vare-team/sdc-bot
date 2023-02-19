@@ -12,4 +12,9 @@ export default async function (guild) {
 		guild.ownerId,
 		guild.id,
 	]);
+	const guilds = await bot.shard.fetchClientValues('guilds.cache.size');
+	await db.query(
+		'INSERT INTO sdcstat(date, added, guilds) VALUES(?, 1, ?) ON DUPLICATE KEY UPDATE added = added + 1, guilds = guilds + 1;',
+		[new Date(), guilds.reduce((acc, guildCount) => acc + guildCount, 0)]
+	);
 }
