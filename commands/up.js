@@ -127,6 +127,8 @@ export async function run(interaction) {
 		delete codes[interaction.guildId][interaction.user.id];
 		if (Object.keys(codes[interaction.guildId]).length === 0) delete codes[interaction.guildId];
 	}
+
+	await db.query('INSERT INTO sdcstat(date, ups) VALUES (?, 1) ON DUPLICATE KEY UPDATE ups = ups + 1', [upTime]);
 }
 
 export default {
