@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import links from '../models/links';
 import db from '../services/db';
 import colors from '../models/colors';
@@ -19,7 +19,7 @@ export async function run(interaction) {
 	}
 
 	const link = links[social];
-	const embed = new MessageEmbed()
+	const embed = new EmbedBuilder()
 		.setColor(colors.blue)
 		.setFooter({ text: 'Ссылка, указанная на сайте мониторинга.' })
 		.setAuthor({
