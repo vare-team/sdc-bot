@@ -20,7 +20,7 @@ global.bot = bot;
 
 process.on('message', m => {
 	if (m === 'startPresence') {
-		changePresence(bot);
+		changePresence();
 		setInterval(changePresence, 30e3);
 
 		if (bot.shard.ids[0] === 0) sync.start();
