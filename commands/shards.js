@@ -11,7 +11,11 @@ export const helpers = {
 export async function run(interaction) {
 	const client = interaction.client;
 	const embed = new EmbedBuilder()
-		.setAuthor(client.user.username, client.user.avatarURL(), 'https://server-discord.com')
+		.setAuthor({
+			name: client.user.username,
+			iconURL: client.user.avatarURL(),
+			url: 'https://server-discord.com',
+		})
 		.setFooter(`Шард сервера: ${shardNames[client.shard.ids[0]]}`)
 		.setColor(colors.blue);
 
