@@ -19,13 +19,14 @@ export async function run(interaction) {
 	}
 
 	const link = links[social];
+	const url = link.url + socials?.[social !== 'custom' ? social : 'website'] ?? '';
 	const embed = new EmbedBuilder()
 		.setColor(colors.blue)
 		.setFooter({ text: 'Ссылка, указанная на сайте мониторинга.' })
 		.setAuthor({
 			name: link.name,
-			iconURL: link.icon,
-			url: link.url + socials?.[social !== 'custom' ? social : 'website'] ?? '',
+			iconURL: link.icon?.length > 0 ? link.icon : null,
+			url: url?.length > 0 ? url : null,
 		});
 
 	await interaction.editReply({ embeds: [embed] });
