@@ -16,7 +16,7 @@ export async function run(interaction) {
 			iconURL: client.user.avatarURL(),
 			url: 'https://server-discord.com',
 		})
-		.setFooter(`Шард сервера: ${shardNames[client.shard.ids[0]]}`)
+		.setFooter({ text: `Шард сервера: ${shardNames[client.shard.ids[0]]}` })
 		.setColor(colors.blue);
 
 	const [guilds, pings, memory] = await Promise.all([
