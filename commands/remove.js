@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import db from '../services/db';
 import colors from '../models/colors';
 import log from '../utils/log';
@@ -21,11 +21,14 @@ export async function run(interaction) {
 
 	log(`Removing guild: ${guild.name} (${guild.id})`);
 
-	const embed = new MessageEmbed()
-		.setAuthor(`Успешно! Сервер «${guild.name}» удален!`, guild.iconURL())
+	const embed = new EmbedBuilder()
+		.setAuthor({
+			name: 'Успешно! Сервер «${guild.name}» удален!',
+			iconURL: guild.iconURL(),
+		})
 		.setColor(colors.green)
 		.setTimestamp()
-		.setFooter(interaction.user.tag);
+		.setFooter({ text: interaction.user.tag });
 
 	await interaction.editReply({ embeds: [embed] });
 }

@@ -21,8 +21,12 @@ export async function run(interaction) {
 	const link = links[social];
 	const embed = new MessageEmbed()
 		.setColor(colors.blue)
-		.setFooter('Ссылка, указанная на сайте мониторинга.')
-		.setAuthor(link.name, link.icon, link.url + socials?.[social !== 'custom' ? social : 'website'] ?? '');
+		.setFooter({ text: 'Ссылка, указанная на сайте мониторинга.' })
+		.setAuthor({
+			name: link.name,
+			iconURL: link.icon,
+			url: link.url + socials?.[social !== 'custom' ? social : 'website'] ?? '',
+		});
 
 	await interaction.editReply({ embeds: [embed] });
 }

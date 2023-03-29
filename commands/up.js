@@ -1,4 +1,4 @@
-import { MessageAttachment, MessageEmbed, WebhookClient } from 'discord.js';
+import { AttachmentBuilder, EmbedBuilder, inlineCode, WebhookClient } from 'discord.js';
 import randomInt from '../utils/random';
 import captcha from '../services/captcha';
 import db from '../services/db';
@@ -15,11 +15,11 @@ export const helpers = {
 
 export async function run(interaction) {
 	const code = interaction.options.getInteger('код');
-	const embed = new MessageEmbed().setAuthor(
-		interaction.guild.name,
-		interaction.guild.iconURL(),
-		`https://server-discord.com/${interaction.guildId}`
-	);
+	const embed = new EmbedBuilder().setAuthor({
+		name: interaction.guild.name,
+		iconURL: interaction.guild.iconURL(),
+		url: `https://server-discord.com/${interaction.guildId}`,
+	});
 
 	/**
 	 * @type {{upTime: Date, status: number, boost: number, upCount: number}}
@@ -38,12 +38,14 @@ export async function run(interaction) {
 			if (!codes[interaction.guildId]) codes[interaction.guildId] = {};
 			codes[interaction.guildId][interaction.user.id] = { code: randomInt(1000, 9999), time: Date.now() };
 
-			const file = new MessageAttachment(captcha(codes[interaction.guildId][interaction.user.id].code), 'code.jpeg');
+			const file = new AttachmentBuilder(captcha(codes[interaction.guildId][interaction.user.id].code), {
+				name: 'code.jpeg',
+			});
 			embed
 				.setImage('attachment://code.jpeg')
 				.setDescription('Введите число, написанное на изображении, используя команду `/up XXXX`')
 				.setColor(colors.blue)
-				.setFooter('Данный код будет действителен в течении 15 секунд!');
+				.setFooter({ text: 'Срок действия кода: 15 секунд' });
 
 			await interaction.deleteReply();
 			await interaction.followUp({ ephemeral: true, embeds: [embed], files: [file] });
@@ -95,14 +97,14 @@ export async function run(interaction) {
 		`{Guild UP} Ups "${upCount}", User "${interaction.user.tag}" (${interaction.user.id}), Guild "${interaction.guild.name}" (${interaction.guildId}), Channel ID ${interaction.channelId}`
 	);
 
-	const logEmbed = new MessageEmbed()
+	const logEmbed = new EmbedBuilder()
 		.setDescription(
-			`Guild: **[${interaction.guild.name}](https://server-discord.com/${interaction.guildId})**\nUser: \`${
+			`Guild: **[${interaction.guild.name}](https://server-discord.com/${interaction.guildId})**\nUser: ${inlineCode(
 				interaction.user.tag
-			}\` | \`${interaction.user.id}\`\n\nTimestamp: \`${upTime.getTime()}\``
+			)} | ${inlineCode(interaction.user.id)}\n\nTimestamp: ${inlineCode(upTime.getTime())}`
 		)
 		.setColor('#4997D0')
-		.setFooter('Emitted by Slash Command');
+		.setFooter({ text: 'Emitted by Slash Command' });
 	await webhook.send({ embeds: [logEmbed] });
 
 	embed
@@ -115,10 +117,10 @@ export async function run(interaction) {
 			[interaction.guildId]
 		);
 
-		embed.addField(
-			'Буст информация:',
-			`${emojis.owner} Место на сайте: **${place}**\n${emojis.ups} Всего UP очков: **${upCount}**`
-		);
+		embed.addFields({
+			name: 'Буст информация:',
+			value: `${emojis.owner} Место на сайте: **${place}**\n${emojis.ups} Всего UP очков: **${upCount}**`,
+		});
 	}
 
 	await interaction.editReply({ embeds: [embed] });
