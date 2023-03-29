@@ -1,11 +1,11 @@
-import { Client, Intents, Options } from 'discord.js';
+import { Client, GatewayIntentBits, Options } from 'discord.js';
 import readyEvent from './events/ready';
 import log from './utils/log';
 import changePresence from './utils/changePresence';
 import { sync } from './services/cron';
 
 const bot = new Client({
-	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 	makeCache: Options.cacheWithLimits({
 		MessageManager: { maxSize: 0 },
 		ThreadManager: { maxSize: 0 },
@@ -20,7 +20,7 @@ global.bot = bot;
 
 process.on('message', m => {
 	if (m === 'startPresence') {
-		changePresence();
+		changePresence(bot);
 		setInterval(changePresence, 30e3);
 
 		if (bot.shard.ids[0] === 0) sync.start();

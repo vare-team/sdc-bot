@@ -4,12 +4,15 @@ import guildUpdateEvent from './guildUpdate';
 import guildDeleteEvent from './guildDelete';
 import interactionCreateEvent from './interactionCreate';
 
-export default function () {
-	bot.on('interactionCreate', interactionCreateEvent);
+/**
+ * @param {Client} client
+ */
+export default function (client) {
+	client.on('interactionCreate', interactionCreateEvent);
 
-	bot.on('guildCreate', guildCreateEvent);
-	bot.on('guildUpdate', guildUpdateEvent);
-	bot.on('guildDelete', guildDeleteEvent);
+	client.on('guildCreate', guildCreateEvent);
+	client.on('guildUpdate', guildUpdateEvent);
+	client.on('guildDelete', guildDeleteEvent);
 
 	log('Shard is ready!');
 }
