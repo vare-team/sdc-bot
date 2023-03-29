@@ -25,6 +25,7 @@ export async function run(interaction) {
 		client.shard.broadcastEval(() => +(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)),
 	]);
 
+	//TODO: заменить филды на дескрипшн, и убедится что не вылазим за 4096 символов
 	const fields = [];
 	for (let i = 0, length = client.shard.count; i < length; i++) {
 		fields.push({
