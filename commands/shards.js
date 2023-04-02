@@ -11,7 +11,6 @@ export const helpers = {
 export async function run(interaction) {
 	const client = interaction.client;
 	const embed = new EmbedBuilder()
-		.setDescription('')
 		.setAuthor({
 			name: client.user.username,
 			iconURL: client.user.avatarURL(),
@@ -26,12 +25,14 @@ export async function run(interaction) {
 		client.shard.broadcastEval(() => +(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)),
 	]);
 
+	let description = '';
 	for (let i = 0, length = client.shard.count; i < length; i++) {
-		embed.data.description +=
+		description +=
 			`${i + 1}. ${shardNames[i]} ${i === client.shard.ids[0] ? '←' : ''}\n` +
 			`Серверов: ${inlineCode(guilds[i])}, Пинг: ${inlineCode(pings[i])} мс, ОЗУ: ${inlineCode(memory[i])} МБ`;
 	}
 
+	embed.setDescription(description);
 	embed.addFields([
 		{ name: '​', value: '​' },
 		{ name: 'Всего', value: `Серверов: ${inlineCode(sum(guilds))}, ОЗУ: ${inlineCode(sum(memory).toFixed(2))} МБ` },
