@@ -29,12 +29,11 @@ export async function run(interaction) {
 	for (let i = 0, length = client.shard.count; i < length; i++) {
 		description +=
 			`${i + 1}. ${shardNames[i]} ${i === client.shard.ids[0] ? '←' : ''}\n` +
-			`Серверов: ${inlineCode(guilds[i])}, Пинг: ${inlineCode(pings[i])} мс, ОЗУ: ${inlineCode(memory[i])} МБ`;
+			`Серверов: ${inlineCode(guilds[i])}, Пинг: ${inlineCode(pings[i])} мс, ОЗУ: ${inlineCode(memory[i])} МБ\n`;
 	}
 
 	embed.setDescription(description);
 	embed.addFields([
-		{ name: '​', value: '​' },
 		{ name: 'Всего', value: `Серверов: ${inlineCode(sum(guilds))}, ОЗУ: ${inlineCode(sum(memory).toFixed(2))} МБ` },
 	]);
 	await interaction.editReply({ embeds: [embed], ephemeral: interaction.options.getBoolean('ephemeral') ?? true });
