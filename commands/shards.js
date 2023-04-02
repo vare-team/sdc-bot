@@ -1,4 +1,4 @@
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, inlineCode } from 'discord.js';
 import colors from '../models/colors';
 import shardNames from '../models/shardNames';
 
@@ -11,6 +11,7 @@ export const helpers = {
 export async function run(interaction) {
 	const client = interaction.client;
 	const embed = new EmbedBuilder()
+		.setDescription('')
 		.setAuthor({
 			name: client.user.username,
 			iconURL: client.user.avatarURL(),
@@ -25,20 +26,16 @@ export async function run(interaction) {
 		client.shard.broadcastEval(() => +(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)),
 	]);
 
-	const fields = [];
 	for (let i = 0, length = client.shard.count; i < length; i++) {
-		fields.push({
-			name: `${i + 1}. ${shardNames[i]} ${i === client.shard.ids[0] ? '←' : ''}`,
-			value: `Серверов: \`${guilds[i]}\`, Пинг: \`${pings[i]} мс\`, ОЗУ: \`${memory[i]} МБ\``,
-		});
+		embed.data.description +=
+			`${i + 1}. ${shardNames[i]} ${i === client.shard.ids[0] ? '←' : ''}\n` +
+			`Серверов: ${inlineCode(guilds[i])}, Пинг: ${inlineCode(pings[i])} мс, ОЗУ: ${inlineCode(memory[i])} МБ`;
 	}
 
-	fields.push(
+	embed.addFields([
 		{ name: '​', value: '​' },
-		{ name: 'Всего', value: `Серверов: \`${sum(guilds)}\`, ОЗУ: \`${sum(memory).toFixed(2)} МБ\`` }
-	);
-
-	embed.addFields(fields);
+		{ name: 'Всего', value: `Серверов: ${inlineCode(sum(guilds))}, ОЗУ: ${inlineCode(sum(memory).toFixed(2))} МБ` },
+	]);
 	await interaction.editReply({ embeds: [embed], ephemeral: interaction.options.getBoolean('ephemeral') ?? true });
 }
 
