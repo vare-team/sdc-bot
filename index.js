@@ -14,13 +14,6 @@ shardManager.on('shardCreate', shard => log(`Shard spawned!`, shard.id));
 	});
 	log(`Shards count: ${amount}`, 'null');
 
-	shardManager.shardList = [...Array(amount).keys()];
-	shardManager.totalShards = amount;
-
-	// Spawn the shards
-	const promises = [];
-	for (let i = 0; i < amount; i++) promises.push(shardManager.createShard(i).spawn(5 * 60e3));
-	const shards = await Promise.all(promises);
-
-	for (const shard of shards) shard.send('startPresence');
+	const shards = await shardManager.spawn({ amount });
+	for (const [, shard] of shards) shard.process.send('startPresence');
 })();
