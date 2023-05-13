@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node --unhandled-rejections=warn --experimental-specifier-resolution=node .",
     "debug": "nodemon --unhandled-rejections=warn --experimental-specifier-resolution=node .",
-		"lint": "eslint .",
-		"lint:fix": "eslint . --fix"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "engines": {
     "node": ">=16"
@@ -16,7 +16,7 @@
     "canvas": "^2.11.0",
     "cron": "^2.3.0",
     "discord.js": "^14.8.0",
-    "mysql2": "^3.2.0"
+    "mariadb": "^3.1.2"
   },
   "devDependencies": {
     "eslint": "^8.37.0",
