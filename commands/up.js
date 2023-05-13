@@ -14,6 +14,7 @@ export const helpers = {
 };
 
 export async function run(interaction) {
+	const upTime = new Date();
 	const code = interaction.options.getInteger('код');
 	const embed = new EmbedBuilder().setAuthor({
 		name: interaction.guild.name,
@@ -36,11 +37,12 @@ export async function run(interaction) {
 	if (!guild.boost) {
 		if (!code) {
 			if (!codes[interaction.guildId]) codes[interaction.guildId] = {};
-			codes[interaction.guildId][interaction.user.id] = { code: randomInt(1000, 9999), time: Date.now() };
+			codes[interaction.guildId][interaction.user.id] = { code: randomInt(1000, 9999), upTime };
 
 			const file = new AttachmentBuilder(captcha(codes[interaction.guildId][interaction.user.id].code), {
 				name: 'code.jpeg',
 			});
+
 			embed
 				.setImage('attachment://code.jpeg')
 				.setDescription('Введите число, написанное на изображении, используя команду `/up XXXX`')
@@ -49,6 +51,7 @@ export async function run(interaction) {
 
 			await interaction.deleteReply();
 			await interaction.followUp({ ephemeral: true, embeds: [embed], files: [file] });
+			codes[interaction.guildId][interaction.user.id].time = Date.now();
 			return;
 		}
 
@@ -72,29 +75,21 @@ export async function run(interaction) {
 			await interaction.followUp({ ephemeral: true, embeds: [embed] });
 			return;
 		}
-
-		const { upTime: upTimeDB } = await db.one('SELECT upTime FROM server WHERE id = ?', [interaction.guildId]);
-		if (Date.now() - upTimeDB <= 4 * 36e5) {
-			const sendDate = Math.floor((upTimeDB + 4 * 36e5) / 1000);
-			embed.setDescription(`Up <t:${sendDate}:R>: <t:${sendDate}:T>`).setColor(colors.red);
-			await interaction.editReply({ embeds: [embed] });
-			return;
-		}
 	}
 
-	const upTime = new Date();
-	const upCount = guild.upCount + (0x8 & guild.status ? 1 : 0) + guild.boost + 1;
-
-	await db.query(`UPDATE server SET upTime = ?, upCount = ?, members = ?, ownerID = ? WHERE id = ?`, [
-		upTime,
-		upCount,
-		interaction.guild.memberCount,
-		interaction.guild.ownerId,
-		interaction.guildId,
-	]);
+	const upCountLog = guild.upCount + (0x8 & guild.status ? 1 : 0) + guild.boost + 1;
+	await db.query(
+		`UPDATE server SET upTime = ?, upCount = upCount + IF(0x8 & status, 1, 0) + boost + 1, members = ?, ownerID = ? WHERE id = ?`,
+		[
+			guild.boost ? upTime : codes[interaction.guildId][interaction.user.id].upTime,
+			interaction.guild.memberCount,
+			interaction.guild.ownerId,
+			interaction.guildId,
+		]
+	);
 
 	log(
-		`{Guild UP} Ups "${upCount}", User "${interaction.user.tag}" (${interaction.user.id}), Guild "${interaction.guild.name}" (${interaction.guildId}), Channel ID ${interaction.channelId}`
+		`{Guild UP} Ups "${upCountLog}", User "${interaction.user.tag}" (${interaction.user.id}), Guild "${interaction.guild.name}" (${interaction.guildId}), Channel ID ${interaction.channelId}`
 	);
 
 	const logEmbed = new EmbedBuilder()
@@ -112,8 +107,8 @@ export async function run(interaction) {
 		.setColor(colors.green);
 
 	if (guild.boost) {
-		const { place } = await db.oneMulti(
-			`SET @row_number = 0; SELECT place FROM (SELECT id, (@row_number := @row_number + 1) AS place FROM server WHERE bot = 1 ORDER BY upCount DESC, upTime, id) as t WHERE id = ?`,
+		const { place, upCount } = await db.oneMulti(
+			`SET @row_number = 0; SELECT place, upCount FROM (SELECT id, upCount, (@row_number := @row_number + 1) AS place FROM server WHERE bot = 1 ORDER BY upCount DESC, upTime, id) as t WHERE id = ?`,
 			[interaction.guildId]
 		);
 
