@@ -11,15 +11,14 @@ export const helpers = {
 
 export async function run(interaction) {
 	/**
-	 * @type {{upCount: number, boost: number, boostTime: Date, status: number, place: number, rating: number, comments: number}}
+	 * @type {{up_count: number, boost: number, boost_end_at: Date, status: number, place: number, rating: number, comments: number}}
 	 */
 	const guild = await db.oneMulti(
-		`SET @row_number = 0; SELECT upCount, boost, boostTime, status, place, rating, comments FROM server
-	  LEFT JOIN boost using(id)
-	  LEFT JOIN (SELECT id, (@row_number:=@row_number + 1) AS place FROM server WHERE bot = 1 ORDER BY upCount DESC, upTime, id) AS temp using(id)
-	  LEFT JOIN (SELECT servId as id, SUM(rate) as rating FROM rating WHERE servId = ?) AS rating using(id)
-	  LEFT JOIN (SELECT servId as id, COUNT(*) as comments FROM comments WHERE servId = ?) AS с using(id)
-	  WHERE id = ?`,
+		`SET @row_number = 0;
+		SELECT up_count, boost, boost_end_at, status, place, SUM(c.rate) as rating, COUNT(c.text) as comments
+		FROM (SELECT id, up_count, boost, boost_end_at, status, (@row_number := @row_number + 1) AS place FROM guilds WHERE is_bot = 1 ORDER BY up_count DESC, up_at, id) as t
+					 LEFT JOIN comments c ON t.id = c.guild_id
+		WHERE t.id = ? GROUP BY t.id`,
 		[interaction.guildId, interaction.guildId, interaction.guildId]
 	);
 
@@ -41,7 +40,7 @@ export async function run(interaction) {
 	const fields = [
 		{
 			name: 'Продвижение:',
-			value: `${emojis.owner} Место на сайте: **${guild.place}**\n${emojis.ups} Всего UP очков: **${guild.upCount}**`,
+			value: `${emojis.owner} Место на сайте: **${guild.place}**\n${emojis.ups} Всего UP очков: **${guild.up_count}**`,
 			inline: true,
 		},
 		{
@@ -54,7 +53,7 @@ export async function run(interaction) {
 		{
 			name: 'Буст:',
 			value: guild.boost
-				? `«**Boost ${boosts[guild.boost]}**», до <t:${Math.floor(guild.boostTime / 1000)}:D>`
+				? `«**Boost ${boosts[guild.boost]}**», до <t:${Math.floor(guild.boost_end_at / 1000)}:D>`
 				: '[Отсутствует](https://server-discord.com/boost)',
 		},
 		{
@@ -71,9 +70,7 @@ export async function run(interaction) {
 		})
 		.setColor(colors.blue)
 		.addFields(fields)
-		.setFooter({
-			text: `Новый сезон через ${beforeDate(endDate)}`,
-		});
+		.setFooter({ text: `Новый сезон через ${beforeDate(endDate)}` });
 
 	await interaction.editReply({ embeds: [embed] });
 }

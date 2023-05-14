@@ -17,7 +17,7 @@ export async function run(interaction) {
 	if (!guild) return interaction.editReply({ content: 'Гильдия не найдена!' });
 
 	await guild.leave();
-	await db.query('DELETE FROM server WHERE id = ?', [id]);
+	await db.query('UPDATE guilds SET deleted_at = now() WHERE id = ?', [id]);
 
 	log(`Removing guild: ${guild.name} (${guild.id})`);
 

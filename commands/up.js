@@ -23,12 +23,12 @@ export async function run(interaction) {
 	});
 
 	/**
-	 * @type {{upTime: Date, status: number, boost: number, upCount: number}}
+	 * @type {{up_at: Date, status: number, boost: number, up_count: number}}
 	 */
-	const guild = await db.one('SELECT upTime, status, boost, upCount FROM server WHERE id = ?', [interaction.guildId]);
+	const guild = await db.one('SELECT up_at, status, boost, up_count FROM guilds WHERE id = ?', [interaction.guildId]);
 
-	if (Date.now() - guild.upTime <= 4 * 36e5) {
-		const sendDate = Math.floor((+guild.upTime + 4 * 36e5) / 1000);
+	if (Date.now() - guild.up_at <= 4 * 36e5) {
+		const sendDate = Math.floor((+guild.up_at + 4 * 36e5) / 1000);
 		embed.setDescription(`Up <t:${sendDate}:R>: <t:${sendDate}:T>`).setColor(colors.red);
 		await interaction.editReply({ embeds: [embed] });
 		return;
@@ -77,9 +77,9 @@ export async function run(interaction) {
 		}
 	}
 
-	const upCountLog = guild.upCount + (0x8 & guild.status ? 1 : 0) + guild.boost + 1;
+	const upCountLog = guild.up_count + (0x8 & guild.status ? 1 : 0) + guild.boost + 1;
 	await db.query(
-		`UPDATE server SET upTime = ?, upCount = upCount + IF(0x8 & status, 1, 0) + boost + 1, members = ?, ownerID = ? WHERE id = ?`,
+		`UPDATE guilds SET up_at = ?, up_count = up_count + IF(0x8 & status, 1, 0) + boost + 1, members = ?, user_id = ? WHERE id = ?`,
 		[
 			guild.boost ? upTime : codes[interaction.guildId][interaction.user.id].upTime,
 			interaction.guild.memberCount,
@@ -107,14 +107,15 @@ export async function run(interaction) {
 		.setColor(colors.green);
 
 	if (guild.boost) {
-		const { place, upCount } = await db.oneMulti(
-			`SET @row_number = 0; SELECT place, upCount FROM (SELECT id, upCount, (@row_number := @row_number + 1) AS place FROM server WHERE bot = 1 ORDER BY upCount DESC, upTime, id) as t WHERE id = ?`,
+		const { place, up_count } = await db.oneMulti(
+			`SET @row_number = 0;
+			SELECT place, up_count FROM (SELECT id, up_count, (@row_number := @row_number + 1) AS place FROM guilds WHERE is_bot = 1 ORDER BY up_count DESC, up_at, id) as t WHERE id = ?`,
 			[interaction.guildId]
 		);
 
 		embed.addFields({
 			name: 'Буст информация:',
-			value: `${emojis.owner} Место на сайте: **${place}**\n${emojis.ups} Всего UP очков: **${upCount}**`,
+			value: `${emojis.owner} Место на сайте: **${place}**\n${emojis.ups} Всего UP очков: **${up_count}**`,
 		});
 	}
 
@@ -125,7 +126,8 @@ export async function run(interaction) {
 		if (Object.keys(codes[interaction.guildId]).length === 0) delete codes[interaction.guildId];
 	}
 
-	await db.query('INSERT INTO sdcstat(date, ups) VALUES (?, 1) ON DUPLICATE KEY UPDATE ups = ups + 1', [upTime]);
+	// todo add db and api for metric
+	// await db.query('INSERT INTO sdcstat(date, ups) VALUES (?, 1) ON DUPLICATE KEY UPDATE ups = ups + 1', [upTime]);
 }
 
 export default {
