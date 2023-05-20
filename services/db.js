@@ -1,6 +1,6 @@
-import mysql2 from 'mysql2';
+import mariadb from 'mariadb';
 
-const db = mysql2.createPool({
+const db = mariadb.createPool({
 	user: process.env.DBLOGIN,
 	password: process.env.DBPASS,
 	host: process.env.DBHOST,
@@ -10,21 +10,19 @@ const db = mysql2.createPool({
 });
 
 export default {
-	query: db.promise().query.bind(db.promise()),
+	query: db.query.bind(db),
 
-	async many(...args) {
-		const query = await db.promise().query(...args);
-		return query[0];
+	many(...args) {
+		return db.query(...args);
 	},
 
 	async one(...args) {
-		const query = await db.promise().query(...args);
-		return query[0][0];
+		const query = await db.query(...args);
+		return query[0];
 	},
 
 	async oneMulti(...args) {
-		const query = await db.promise().query(...args);
-		console.log(query[0][1]);
-		return query[0][1][0];
+		const query = await db.query(...args);
+		return query[1][0];
 	},
 };

@@ -9,7 +9,7 @@ export const helpers = {
 
 export async function run(interaction) {
 	const social = interaction.options.getString('сайт');
-	const socials = await db.one('SELECT * FROM userUrls WHERE id = ?', [interaction.guildId]);
+	const { socials } = await db.one('SELECT socials FROM guilds WHERE id = ?', [interaction.guildId]);
 	console.log(socials);
 
 	if (!socials?.[social !== 'custom' ? social : 'website']) {
