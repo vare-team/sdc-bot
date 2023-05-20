@@ -78,6 +78,11 @@ export async function run(interaction) {
 	}
 
 	const upCountLog = guild.up_count + (0x8 & guild.status ? 1 : 0) + guild.boost + 1;
+	const user = interaction.user;
+	await db.query(
+		'INSERT INTO users (id, username, avatar, created_at, updated_at) VALUES (?, ?, ?, now(), now()) ON DUPLICATE KEY UPDATE username = ?, avatar = ?, updated_at = now()',
+		[user.id, user.username, user.avatar, user.username, user.avatar]
+	);
 	await db.query(
 		`UPDATE guilds SET up_at = ?, up_count = up_count + IF(0x8 & status, 1, 0) + boost + 1, members = ?, user_id = ? WHERE id = ?`,
 		[
