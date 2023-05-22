@@ -7,6 +7,7 @@ import colors from '../models/colors';
 import emojis from '../models/emojis';
 
 const codes = {};
+const guilds = new Set();
 const webhook = new WebhookClient({ url: process.env.WEBHOOK_URL });
 
 export const helpers = {
@@ -77,6 +78,15 @@ export async function run(interaction) {
 		}
 	}
 
+	if (guilds.has(interaction.guildId)) {
+		embed.setDescription('Ап уже в процессе!').setColor(colors.red);
+		await interaction.deleteReply();
+		await interaction.followUp({ ephemeral: true, embeds: [embed] });
+		return;
+	}
+
+	guilds.add(interaction.guildId);
+
 	const upCountLog = guild.up_count + (0x8 & guild.status ? 1 : 0) + guild.boost + 1;
 	const user = interaction.user;
 	await db.query(
@@ -124,6 +134,7 @@ export async function run(interaction) {
 		});
 	}
 
+	guilds.delete(interaction.guildId);
 	await interaction.editReply({ embeds: [embed] });
 
 	if (!guild.boost) {
