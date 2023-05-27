@@ -5,6 +5,7 @@ import db from '../services/db';
 import log from '../utils/log';
 import colors from '../models/colors';
 import emojis from '../models/emojis';
+import metric from '../services/metric.js';
 
 const codes = {};
 const guilds = new Set();
@@ -142,8 +143,7 @@ export async function run(interaction) {
 		if (Object.keys(codes[interaction.guildId]).length === 0) delete codes[interaction.guildId];
 	}
 
-	// todo add db and api for metric
-	// await db.query('INSERT INTO sdcstat(date, ups) VALUES (?, 1) ON DUPLICATE KEY UPDATE ups = ups + 1', [upTime]);
+	await metric('/ups');
 }
 
 export default {
