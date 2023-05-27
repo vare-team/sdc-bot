@@ -1,4 +1,5 @@
 import db from '../services/db';
+import metric from '../services/metric.js';
 
 export default async function (guild) {
 	const inDB = await db.one('SELECT id FROM guilds WHERE id = ?', [guild.id]);
@@ -18,11 +19,7 @@ export default async function (guild) {
 		guild.id,
 	]);
 
-	// todo add db and api for metric
-	// const guilds = await bot.shard.fetchClientValues('guilds.cache.size');
-	// const allGuilds = guilds.reduce((acc, guild) => acc + guild, 0);
-	// await db.query(
-	// 	'INSERT INTO sdcstat(date, added, guilds) VALUES(?, 1, ?) ON DUPLICATE KEY UPDATE added = added + 1, guilds = ?;',
-	// 	[new Date(), allGuilds, allGuilds]
-	// );
+	const guilds = await bot.shard.fetchClientValues('guilds.cache.size');
+	const allGuilds = guilds.reduce((acc, guild) => acc + guild, 0);
+	await metric('/guilds/added', allGuilds);
 }
