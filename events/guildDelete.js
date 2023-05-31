@@ -6,5 +6,5 @@ export default async function (guild) {
 
 	const guilds = await bot.shard.fetchClientValues('guilds.cache.size');
 	const allGuilds = guilds.reduce((acc, guild) => acc + guild, 0);
-	await metric('/guilds/removed', allGuilds);
+	await metric('/sdc/removed', allGuilds);
 }
