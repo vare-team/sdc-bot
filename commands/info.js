@@ -9,6 +9,8 @@ export const helpers = {
 	ephemeral: false,
 };
 
+const offset = 3;
+
 export async function run(interaction) {
 	/**
 	 * @type {{up_count: number, boost: number, boost_end_at: Date, status: number, place: number, rating: number, comments: number}}
@@ -26,16 +28,16 @@ export async function run(interaction) {
 
 	const endDate = new Date();
 	endDate.setMonth(
-		endDate.getDate() > 15 || (endDate.getDate() === 15 && endDate.getHours() > 12)
+		endDate.getDate() > 15 || (endDate.getDate() === 15 && endDate.getHours() > 12 - offset)
 			? endDate.getMonth() + 1
 			: endDate.getMonth(),
 		endDate.getDate() > 15 ||
-			(endDate.getDate() === 15 && endDate.getHours() > 12) ||
-			(endDate.getDate() === 1 && endDate.getHours() < 12)
+			(endDate.getDate() === 15 && endDate.getHours() > 12 - offset) ||
+			(endDate.getDate() === 1 && endDate.getHours() < 12 - offset)
 			? 1
 			: 15
 	);
-	endDate.setHours(12, 0);
+	endDate.setHours(12 - offset, 0);
 
 	const fields = [
 		{
