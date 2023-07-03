@@ -23,7 +23,7 @@ export async function run(interaction) {
 
 	const embed = new EmbedBuilder()
 		.setAuthor({
-			name: 'Успешно! Сервер «${guild.name}» удален!',
+			name: `Успешно! Сервер «${guild.name}» удален!`,
 			iconURL: guild.iconURL(),
 		})
 		.setColor(colors.green)
