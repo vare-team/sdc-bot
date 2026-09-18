@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log"
 	"os"
 	"os/signal"
@@ -9,34 +9,49 @@ import (
 
 	"github.com/joho/godotenv"
 
-	"github.com/bwmarrin/discordgo"
-
-	"sdc/events"
+	"sdc/bot"
+	"sdc/config"
+	"sdc/jobs"
+	"sdc/store"
+	"sdc/utils"
 )
 
-func init() {
+func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Print("No .env file found")
 	}
-}
 
-func main() {
-	session, err := discordgo.New("Bot " + os.Getenv("DISCORD_TOKEN"))
+	cfg, err := config.Load()
 	if err != nil {
-		log.Fatalf("error creating session: %s", err)
-		return
+		log.Fatalf("config: %v", err)
 	}
-	session.AddHandler(events.InteractionCreate)
 
-	err = session.Open()
+	st, err := store.Open(cfg.DSN())
 	if err != nil {
-		log.Fatalf("error opening websocket: %s", err)
-		return
+		log.Fatalf("database: %v", err)
 	}
-	defer session.Close()
+	defer func() { _ = st.Close() }()
 
-	fmt.Println("Bot is now running. Press Ctrl+C to stop")
+	mgr := bot.NewManager(cfg, st)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := mgr.Start(ctx); err != nil {
+		log.Fatalf("bot start: %v", err)
+	}
+	defer mgr.Stop()
+
+	cron := jobs.NewCron(st, mgr.Cache)
+	cron.Start()
+	defer cron.Stop()
+
+	presence := jobs.NewPresence(mgr.Sessions, mgr.TotalGuilds)
+	presence.Start()
+	defer presence.Stop()
+
+	utils.Log("Bot %s is now running. Press Ctrl+C to stop", mgr.BotName())
 	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM)
 	<-sc
+	utils.Log("Shutting down...")
 }

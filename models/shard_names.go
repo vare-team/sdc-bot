@@ -1,0 +1,18 @@
+package models
+
+import "strconv"
+
+var ShardNames = []string{
+	"Helix", "Lucent", "Boltace", "Aurora", "Goldenblood", "Hespar", "Jurori", "Blackjack",
+	"Homa", "Undefined", "Glory", "Kronen", "Wangsheng", "Kerti", "Cognitum", "Thanatos",
+	"Rampage", "Xoris", "Fluttershy", "Caustacyst", "Luna", "Xarelli", "Ogris", "Corufell",
+	"P-21", "Tatsu", "Lambent", "Lacera", "Cerata", "Moonshadow", "Santeo", "Buu",
+	"Ignis", "Dusk", "Pixia", "Lurin",
+}
+
+func ShardName(id int) string {
+	if id < 0 || id >= len(ShardNames) {
+		return "Shard-" + strconv.Itoa(id)
+	}
+	return ShardNames[id]
+}
